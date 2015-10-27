@@ -1,0 +1,21 @@
+apply plugin: 'java'
+
+def version = '5.18.0'
+
+task pack(type: Jar) {
+    baseName = "activiti-web-designer-${version}"
+    metaInf {
+        into 'resources'
+        from 'src/main/webapp'
+        include ('diagram-viewer/**', 'editor-app/**', 'modeler.html')
+        exclude 'editor-app/app-cfg.js'
+    }
+    manifest {
+        attributes('Created-By': 'Gradle',
+                   'Specification-Title': 'Activiti Web Designer',
+                   'Specification-Version': version,
+                   'Implementation-Title': 'Activiti Web Designer from Explorer',
+                   'Implementation-Version': version,
+                   'Implementation-URL': 'https://github.com/AlphaHinex/Activiti/tree/web-designer/modules/activiti-webapp-explorer2')
+    }
+}

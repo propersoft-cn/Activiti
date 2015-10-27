@@ -11,3 +11,17 @@ Activiti is a light-weight workflow and Business Process Management (BPM) Platfo
 Activiti JIRA: https://activiti.atlassian.net
 
 Activiti QA: http://ec2-54-217-5-246.eu-west-1.compute.amazonaws.com:8080/jenkins/
+
+
+web-designer branch
+-------------------
+
+This branch use `Gradle` build system to pack Activiti front-end static resources from `activiti-webapp-explorer2` module (diagram-viewer, editor-app, modeler.html) into `activiti-web-designer-xxx.jar` as `Acitiviti Web Designer`.
+
+Static resources are packed under `META-INF/resources/` in the jar, which could be used as a part of the main web app integrated with.
+
+Pack with
+
+    $ ./gradlew clean pack
+    
+and you could find the `activiti-web-designer-xxx.jar` at `modules/activiti-webapp-explorer2/build/libs`
