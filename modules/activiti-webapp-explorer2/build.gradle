@@ -16,6 +16,6 @@ task pack(type: Jar) {
                    'Specification-Version': version,
                    'Implementation-Title': 'Activiti Web Designer from Explorer',
                    'Implementation-Version': version,
-                   'Implementation-URL': 'https://github.com/AlphaHinex/Activiti/tree/web-designer/modules/activiti-webapp-explorer2')
+                   'Implementation-URL': 'https://github.com/AlphaHinex/Activiti/tree/web-designer')
     }
 }
