@@ -18,9 +18,24 @@ web-designer branch
 
 This branch use `Gradle` build system to pack Activiti front-end static resources from `activiti-webapp-explorer2` module (diagram-viewer, editor-app, modeler.html) into `activiti-web-designer-xxx.jar` as `Acitiviti Web Designer`.
 
-Static resources are packed under `META-INF/resources/` in the jar, which could be used as a part of the main web app integrated with.
+Static resources are packed under `META-INF/resources/` in the jar, which could be used as a dependency of the main web app.
 
-Pack with
+Clone this repo and add upstream, you should only do this once:
+
+    $ git clone https://github.com/AlphaHinex/Activiti.git
+    $ cd Activiti
+    $ git remote add upstream https://github.com/Activiti/Activiti.git
+
+Merge with Activiti release every time you want to update your jar
+
+    $ git checkout master
+    $ git pull upstream activiti-x.xx.x
+    $ git checkout web-designer
+    $ git merge master
+    # change version string in jar filename
+    $ vi modules/activiti-webapp-explorer2/build.gradle
+    
+and then pack with
 
     $ ./gradlew clean pack
     
