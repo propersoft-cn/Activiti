@@ -9,6 +9,7 @@ task pack(type: Jar) {
         from 'src/main/webapp'
         include ('diagram-viewer/**', 'editor-app/**', 'modeler.html')
         exclude 'editor-app/app-cfg.js'
+        exclude 'editor-app/configuration/toolbar-custom-actions.js'
     }
     manifest {
         attributes('Created-By': 'Gradle',
