@@ -20,6 +20,12 @@ This branch use `Gradle` build system to pack Activiti front-end static resource
 
 Static resources are packed under `META-INF/resources/` in the jar, which could be used as a dependency of the main web app.
 
+### Current version
+
+Now this branch has merged `activiti-5.19.0` tag, and you can find diff [here](https://github.com/Activiti/Activiti/compare/activiti-5.19.0...AlphaHinex:web-designer)
+
+### How to use
+
 Clone this repo and add upstream, you should only do this once:
 
     $ git clone https://github.com/AlphaHinex/Activiti.git
