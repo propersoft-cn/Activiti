@@ -20,6 +20,8 @@ var KISBPM = KISBPM || {};
 
 KISBPM.URL = {
 
+    afterClose: './',
+
     getModel: function(modelId) {
         return ACTIVITI.CONFIG.contextRoot + '/model/' + modelId + '/json';
     },
