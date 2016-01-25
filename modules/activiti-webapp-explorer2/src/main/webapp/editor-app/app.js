@@ -48,7 +48,7 @@ activitiModeler
             suffix: '.json'
         });
 
-        $translateProvider.preferredLanguage('en');
+        $translateProvider.preferredLanguage(ACTIVITI.CONFIG.lang);
 
         // remember language
         $translateProvider.useCookieStorage();
