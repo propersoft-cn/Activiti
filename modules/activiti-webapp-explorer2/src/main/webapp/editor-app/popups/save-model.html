@@ -5,12 +5,12 @@
         <div class="modal-header">
             <h2>{{'MODEL.SAVE.TITLE' | translate}}</h2>
         </div>
-        <div class="modal-body">
+        <div class="modal-body" wd-unify>
         
         	<div class="form-group">
            		<label for="nameField">{{'MODEL.NAME' | translate}}</label>
         		<input type="text"
-                       ng-disabled="status.loading"
+                       ng-disabled="status.loading || readonly"
                        id="nameField"
                        class="form-control"
                        ng-model="saveDialog.name"
@@ -19,7 +19,7 @@
         	</div>
         	<div class="form-group">
            		<label for="docTextArea">{{'MODEL.DESCRIPTION' | translate}}</label>
-           		<textarea id="docTextArea" ng-disabled="status.loading" class="form-control" ng-model="saveDialog.description"></textarea>
+           		<textarea id="docTextArea" ng-disabled="status.loading || readonly" class="form-control" ng-model="saveDialog.description"></textarea>
         	</div>
         </div>
         <div class="modal-footer">
