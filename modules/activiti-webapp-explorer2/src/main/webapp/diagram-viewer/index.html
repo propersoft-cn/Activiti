@@ -111,7 +111,7 @@ $(document).ready(function(){
   var shortenedUrl = window.document.location.href.replace(baseUrl, "");
   baseUrl = baseUrl + shortenedUrl.substring(0, shortenedUrl.indexOf("/"));
 
-  var prefix = PREFIX || '/service';
+  var prefix = typeof(PREFIX) === 'undefined' ? '/service' : PREFIX;
   
   ActivitiRest.options = {
     processInstanceHighLightsUrl: baseUrl + prefix + "/process-instance/{processInstanceId}/highlights?callback=?",
