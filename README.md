@@ -22,7 +22,7 @@ Static resources are packed under `META-INF/resources/` in the jar, which could 
 
 ### Current version
 
-Now this branch has merged `activiti-5.19.0` tag, and you can find diff [here](https://github.com/Activiti/Activiti/compare/activiti-5.19.0...AlphaHinex:web-designer)
+Now this branch has merged `activiti-5.19.0.2` tag, and you can find diff [here](https://github.com/Activiti/Activiti/5.19.0.2...AlphaHinex:web-designer)
 
 ### How to use
 
