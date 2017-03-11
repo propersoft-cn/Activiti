@@ -150,7 +150,7 @@ public class UserTaskActivityBehavior extends TaskActivityBehavior {
           BusinessCalendar businessCalendar = Context
             .getProcessEngineConfiguration()
             .getBusinessCalendarManager()
-            .getBusinessCalendar(DueDateBusinessCalendar.NAME);
+            .getBusinessCalendar(taskDefinition.getBusinessCalendarNameExpression().getValue(execution).toString());
           task.setDueDate(businessCalendar.resolveDuedate((String) dueDate));
         } else {
           throw new ActivitiIllegalArgumentException("Due date expression does not resolve to a Date or Date string: " + 
@@ -201,20 +201,23 @@ public class UserTaskActivityBehavior extends TaskActivityBehavior {
     	}
     }
     
-    handleAssignments(activeAssigneeExpression, activeOwnerExpression, activeCandidateUserExpressions, 
+    boolean skipUserTask = SkipExpressionUtil.isSkipExpressionEnabled(execution, activeSkipExpression) &&
+        SkipExpressionUtil.shouldSkipFlowElement(execution, activeSkipExpression);
+    
+    if (!skipUserTask) {
+      handleAssignments(activeAssigneeExpression, activeOwnerExpression, activeCandidateUserExpressions, 
         activeCandidateGroupExpressions, task, execution);
-   
+    }
+
+    task.fireEvent(TaskListener.EVENTNAME_CREATE);
+
     // All properties set, now firing 'create' events
     if (Context.getProcessEngineConfiguration().getEventDispatcher().isEnabled()) {
       Context.getProcessEngineConfiguration().getEventDispatcher().dispatchEvent(
         ActivitiEventBuilder.createEntityEvent(ActivitiEventType.TASK_CREATED, task));
     }
 
-    task.fireEvent(TaskListener.EVENTNAME_CREATE);
-
-    if (SkipExpressionUtil.isSkipExpressionEnabled(execution, activeSkipExpression) &&
-        SkipExpressionUtil.shouldSkipFlowElement(execution, activeSkipExpression)) {
-      
+    if (skipUserTask) {
       task.complete(null, false);
     }
   }

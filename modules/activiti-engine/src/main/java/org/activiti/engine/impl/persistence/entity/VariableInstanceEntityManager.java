@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.activiti.engine.impl.persistence.AbstractManager;
 
@@ -34,8 +35,18 @@ public class VariableInstanceEntityManager extends AbstractManager {
   }
   
   @SuppressWarnings("unchecked")
+  public List<VariableInstanceEntity> findVariableInstancesByTaskIds(Set<String> taskIds) {
+    return getDbSqlSession().selectList("selectVariablesByTaskIds", taskIds);
+  }
+  
+  @SuppressWarnings("unchecked")
   public List<VariableInstanceEntity> findVariableInstancesByExecutionId(String executionId) {
     return getDbSqlSession().selectList("selectVariablesByExecutionId", executionId);
+  }
+  
+  @SuppressWarnings("unchecked")
+  public List<VariableInstanceEntity> findVariableInstancesByExecutionIds(Set<String> executionIds) {
+    return getDbSqlSession().selectList("selectVariablesByExecutionIds", executionIds);
   }
   
 	public VariableInstanceEntity findVariableInstanceByExecutionAndName(String executionId, String variableName) {
@@ -69,7 +80,7 @@ public class VariableInstanceEntityManager extends AbstractManager {
 	}
 	
   public void deleteVariableInstanceByTask(TaskEntity task) {
-    Map<String, VariableInstanceEntity> variableInstances = task.getVariableInstances();
+    Map<String, VariableInstanceEntity> variableInstances = task.getVariableInstanceEntities();
     if (variableInstances!=null) {
       for (VariableInstanceEntity variableInstance: variableInstances.values()) {
         variableInstance.delete();

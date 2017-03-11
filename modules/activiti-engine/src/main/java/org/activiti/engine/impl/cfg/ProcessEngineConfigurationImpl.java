@@ -16,6 +16,7 @@ package org.activiti.engine.impl.cfg;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
@@ -32,9 +33,12 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
+import javax.xml.namespace.QName;
 
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.engine.ActivitiException;
@@ -516,8 +520,14 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
   protected List<ResolverFactory> resolverFactories;
   
   protected BusinessCalendarManager businessCalendarManager;
+  
+  protected int executionQueryLimit = 20000;
+  protected int taskQueryLimit = 20000;
+  protected int historicTaskQueryLimit = 20000;
+  protected int historicProcessInstancesQueryLimit = 20000;
 
   protected String wsSyncFactoryClassName = DEFAULT_WS_SYNC_FACTORY;
+  protected ConcurrentMap<QName, URL> wsOverridenEndpointAddresses = new ConcurrentHashMap<QName, URL>();
 
   protected CommandContextFactory commandContextFactory;
   protected TransactionContextFactory transactionContextFactory;
@@ -575,6 +585,18 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
   
   // Event logging to database
   protected boolean enableDatabaseEventLogging = false;
+  
+  /**
+   * Using field injection together with a delegate expression for a service
+   * task / execution listener / task listener is not thread-sade , see user
+   * guide section 'Field Injection' for more information.
+   * 
+   * Set this flag to false to throw an exception at runtime when a field is
+   * injected and a delegateExpression is used. Default is true for backwards compatibility.
+   * 
+   * @since 5.21
+   */
+  protected DelegateExpressionFieldInjectionMode delegateExpressionFieldInjectionMode = DelegateExpressionFieldInjectionMode.COMPATIBILITY;
   
   /**
    *  Define a max length for storing String variable types in the database.
@@ -815,6 +837,7 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
     databaseTypeMappings.setProperty("DB2/LINUXX8664",DATABASE_TYPE_DB2);
     databaseTypeMappings.setProperty("DB2/LINUXZ64",DATABASE_TYPE_DB2);
     databaseTypeMappings.setProperty("DB2/LINUXPPC64",DATABASE_TYPE_DB2);
+    databaseTypeMappings.setProperty("DB2/LINUXPPC64LE",DATABASE_TYPE_DB2);
     databaseTypeMappings.setProperty("DB2/400 SQL",DATABASE_TYPE_DB2);
     databaseTypeMappings.setProperty("DB2/6000",DATABASE_TYPE_DB2);
     databaseTypeMappings.setProperty("DB2 UDB iSeries",DATABASE_TYPE_DB2);
@@ -878,6 +901,11 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
         Reader reader = new InputStreamReader(inputStream);
         Properties properties = new Properties();
         properties.put("prefix", databaseTablePrefix);
+        String wildcardEscapeClause = "";
+        if ((databaseWildcardEscapeCharacter != null) && (databaseWildcardEscapeCharacter.length() != 0)) {
+          wildcardEscapeClause = " escape '" + databaseWildcardEscapeCharacter + "'";
+        }
+        properties.put("wildcardEscapeClause", wildcardEscapeClause);
         if(databaseType != null) {
           properties.put("limitBefore" , DbSqlSessionFactory.databaseSpecificLimitBeforeStatements.get(databaseType));
           properties.put("limitAfter" , DbSqlSessionFactory.databaseSpecificLimitAfterStatements.get(databaseType));
@@ -1886,6 +1914,34 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
     return this;
   }
   
+  /**
+   * Add or replace the address of the given web-service endpoint with the given value
+   * @param endpointName The endpoint name for which a new address must be set
+   * @param address The new address of the endpoint
+   */
+  public ProcessEngineConfiguration addWsEndpointAddress(QName endpointName, URL address) {
+      this.wsOverridenEndpointAddresses.put(endpointName, address);
+      return this;
+  }
+  
+  /**
+   * Remove the address definition of the given web-service endpoint
+   * @param endpointName The endpoint name for which the address definition must be removed
+   */
+  public ProcessEngineConfiguration removeWsEndpointAddress(QName endpointName) {
+      this.wsOverridenEndpointAddresses.remove(endpointName);
+      return this;
+  }
+  
+  public ConcurrentMap<QName, URL> getWsOverridenEndpointAddresses() {
+      return this.wsOverridenEndpointAddresses;
+  }
+  
+  public ProcessEngineConfiguration setWsOverridenEndpointAddresses(final ConcurrentMap<QName, URL> wsOverridenEndpointAdress) {
+    this.wsOverridenEndpointAddresses.putAll(wsOverridenEndpointAdress);
+    return this;
+  }
+  
   public Map<String, FormEngine> getFormEngines() {
     return formEngines;
   }
@@ -1940,6 +1996,42 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
     return this;
   }
   
+  public int getExecutionQueryLimit() {
+    return executionQueryLimit;
+  }
+
+  public ProcessEngineConfigurationImpl setExecutionQueryLimit(int executionQueryLimit) {
+    this.executionQueryLimit = executionQueryLimit;
+    return this;
+  }
+
+  public int getTaskQueryLimit() {
+    return taskQueryLimit;
+  }
+
+  public ProcessEngineConfigurationImpl setTaskQueryLimit(int taskQueryLimit) {
+    this.taskQueryLimit = taskQueryLimit;
+    return this;
+  }
+
+  public int getHistoricTaskQueryLimit() {
+    return historicTaskQueryLimit;
+  }
+
+  public ProcessEngineConfigurationImpl setHistoricTaskQueryLimit(int historicTaskQueryLimit) {
+    this.historicTaskQueryLimit = historicTaskQueryLimit;
+    return this;
+  }
+
+  public int getHistoricProcessInstancesQueryLimit() {
+    return historicProcessInstancesQueryLimit;
+  }
+
+  public ProcessEngineConfigurationImpl setHistoricProcessInstancesQueryLimit(int historicProcessInstancesQueryLimit) {
+    this.historicProcessInstancesQueryLimit = historicProcessInstancesQueryLimit;
+    return this;
+  }
+
   public CommandContextFactory getCommandContextFactory() {
     return commandContextFactory;
   }
@@ -2497,6 +2589,14 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
 		this.maxNrOfStatementsInBulkInsert = maxNrOfStatementsInBulkInsert;
 		return this;
 	}
+	
+  public DelegateExpressionFieldInjectionMode getDelegateExpressionFieldInjectionMode() {
+    return delegateExpressionFieldInjectionMode;
+  }
+
+  public void setDelegateExpressionFieldInjectionMode(DelegateExpressionFieldInjectionMode delegateExpressionFieldInjectionMode) {
+    this.delegateExpressionFieldInjectionMode = delegateExpressionFieldInjectionMode;
+  }
 
   public ObjectMapper getObjectMapper() {
     return objectMapper;

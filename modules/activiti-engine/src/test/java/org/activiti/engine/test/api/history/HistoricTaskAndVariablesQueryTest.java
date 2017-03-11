@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.activiti.engine.history.HistoricTaskInstance;
+import org.activiti.engine.history.HistoricTaskInstanceQuery;
 import org.activiti.engine.impl.history.HistoryLevel;
 import org.activiti.engine.impl.test.PluggableActivitiTestCase;
 import org.activiti.engine.runtime.ProcessInstance;
@@ -351,6 +352,34 @@ public class HistoricTaskAndVariablesQueryTest extends PluggableActivitiTestCase
       assertEquals(123, variableMap.get("testVar2"));
     }
   }
+
+  @Deployment
+  public void testOrQueryMultipleVariableValues() {
+      Map<String, Object> startMap = new HashMap<String, Object>();
+      startMap.put("processVar", true);
+      startMap.put("anotherProcessVar", 123);
+      runtimeService.startProcessInstanceByKey("oneTaskProcess", startMap);
+
+      startMap.put("anotherProcessVar", 999);
+      runtimeService.startProcessInstanceByKey("oneTaskProcess", startMap);
+
+      HistoricTaskInstanceQuery query0 = historyService.createHistoricTaskInstanceQuery().includeProcessVariables().or();
+      for (int i = 0; i < 20; i++) {
+          query0 = query0.processVariableValueEquals("anotherProcessVar", i);
+      }
+      query0 = query0.endOr();
+      assertNull(query0.singleResult());
+
+      HistoricTaskInstanceQuery query1 = historyService.createHistoricTaskInstanceQuery().includeProcessVariables().or().processVariableValueEquals("anotherProcessVar", 123);
+      for (int i = 0; i < 20; i++) {
+          query1 = query1.processVariableValueEquals("anotherProcessVar", i);
+      }
+      query1 = query1.endOr();
+      HistoricTaskInstance task = query1.singleResult();
+      assertEquals(2, task.getProcessVariables().size());
+      assertEquals(true, task.getProcessVariables().get("processVar"));
+      assertEquals(123, task.getProcessVariables().get("anotherProcessVar"));
+  }
   
   @Deployment
   public void testCandidate() {
@@ -487,6 +516,29 @@ public class HistoricTaskAndVariablesQueryTest extends PluggableActivitiTestCase
     }
   }
   
+  
+  // Unit test for https://activiti.atlassian.net/browse/ACT-4152
+  public void testQueryWithIncludeTaskVariableAndTaskCategory() {
+  	List<HistoricTaskInstance> tasks = historyService.createHistoricTaskInstanceQuery().taskAssignee("gonzo").list();
+  	for (HistoricTaskInstance task : tasks) {
+  		assertNotNull(task.getCategory());
+  		assertEquals("testCategory", task.getCategory());
+  	}
+  	
+  	tasks = historyService.createHistoricTaskInstanceQuery().taskAssignee("gonzo").includeTaskLocalVariables().list();
+  	for (HistoricTaskInstance task : tasks) {
+  		assertNotNull(task.getCategory());
+  		assertEquals("testCategory", task.getCategory());
+  	}
+  	
+
+  	tasks = historyService.createHistoricTaskInstanceQuery().taskAssignee("gonzo").includeProcessVariables().list();
+  	for (HistoricTaskInstance task : tasks) {
+  		assertNotNull(task.getCategory());
+  		assertEquals("testCategory", task.getCategory());
+  	}
+  }
+  
   /**
    * Generates some test tasks. - 2 tasks where kermit is a candidate and 1 task
    * where gonzo is assignee
@@ -514,6 +566,7 @@ public class HistoricTaskAndVariablesQueryTest extends PluggableActivitiTestCase
     task.setName("gonzoTask");
     task.setDescription("gonzo description");
     task.setPriority(4);    
+    task.setCategory("testCategory");
     taskService.saveTask(task);
     taskService.setAssignee(task.getId(), "gonzo");
     taskService.setVariableLocal(task.getId(), "testVar", "someVariable");

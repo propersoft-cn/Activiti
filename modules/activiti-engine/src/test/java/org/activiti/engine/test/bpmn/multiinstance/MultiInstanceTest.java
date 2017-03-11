@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import junit.framework.Assert;
+
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.DelegateTask;
 import org.activiti.engine.delegate.ExecutionListener;
@@ -1279,6 +1281,84 @@ public class MultiInstanceTest extends PluggableActivitiTestCase {
 		assertEquals(1, TestStartExecutionListener.countWithoutLoopCounter.get());
 		assertEquals(1, TestEndExecutionListener.countWithoutLoopCounter.get());
   }
+  
+  @Deployment
+  public void testEndTimeOnMiSubprocess() {
+    
+    if (!processEngineConfiguration.getHistoryLevel().isAtLeast(HistoryLevel.AUDIT)) {
+      return;
+    }
+    
+    ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("multiInstanceSubProcessParallelTasks");
+    
+    List<Task> tasks = taskService.createTaskQuery().processInstanceId(processInstance.getId()).list();
+    assertEquals(2, tasks.size());
+    assertEquals("User Task 1", tasks.get(0).getName());
+    assertEquals("User Task 1", tasks.get(1).getName());
+    
+    // End time should not be set for the subprocess
+    List<HistoricActivityInstance> historicActivityInstances = historyService.createHistoricActivityInstanceQuery().activityId("subprocess1").list();
+    assertEquals(2, historicActivityInstances.size());
+    for (HistoricActivityInstance historicActivityInstance : historicActivityInstances) {
+      assertNotNull(historicActivityInstance.getStartTime());
+      assertNull(historicActivityInstance.getEndTime());
+    }
+    
+    // Complete one of the user tasks. This should not trigger setting of end time of the subprocess, but due to a bug it did exactly that
+    taskService.complete(tasks.get(0).getId());
+    historicActivityInstances = historyService.createHistoricActivityInstanceQuery().activityId("subprocess1").list();
+    assertEquals(2, historicActivityInstances.size());
+    for (HistoricActivityInstance historicActivityInstance : historicActivityInstances) {
+      assertNull(historicActivityInstance.getEndTime());
+    }
+    
+    taskService.complete(tasks.get(1).getId());
+    historicActivityInstances = historyService.createHistoricActivityInstanceQuery().activityId("subprocess1").list();
+    assertEquals(2, historicActivityInstances.size());
+    for (HistoricActivityInstance historicActivityInstance : historicActivityInstances) {
+      assertNull(historicActivityInstance.getEndTime());
+    }
+    
+    tasks = taskService.createTaskQuery().processInstanceId(processInstance.getId()).taskName("User Task 3").list();
+    assertEquals(2, tasks.size());
+    for (Task task : tasks) {
+      taskService.complete(task.getId());
+      historicActivityInstances = historyService.createHistoricActivityInstanceQuery().activityId("subprocess1").list();
+      assertEquals(2, historicActivityInstances.size());
+      for (HistoricActivityInstance historicActivityInstance : historicActivityInstances) {
+        assertNull(historicActivityInstance.getEndTime());
+      }
+    }
+    
+    // Finishing the tasks should also set the end time
+    tasks = taskService.createTaskQuery().processInstanceId(processInstance.getId()).list();
+    assertEquals(2, tasks.size());
+    for (Task task : tasks) {
+      taskService.complete(task.getId());
+    }
+    
+    historicActivityInstances = historyService.createHistoricActivityInstanceQuery().activityId("subprocess1").list();
+    assertEquals(2, historicActivityInstances.size());
+    for (HistoricActivityInstance historicActivityInstance : historicActivityInstances) {
+      assertNotNull(historicActivityInstance.getEndTime());
+    }
+  }
+  
+  @Deployment
+  public void testChangingCollection() {
+    Map<String, Object> vars = new HashMap<String, Object>();
+    vars.put("multi_users", Arrays.asList("testuser"));
+    ProcessInstance instance = runtimeService.startProcessInstanceByKey("test_multi", vars);
+    assertNotNull(instance);
+    Task task = taskService.createTaskQuery().singleResult();
+    assertEquals("multi", task.getTaskDefinitionKey());
+    vars.put("multi_users", new ArrayList<String>()); // <-- Problem here.
+    taskService.complete(task.getId(), vars);
+    List<ProcessInstance> instances = runtimeService.createProcessInstanceQuery().list();
+    assertEquals(0, instances.size());
+  }
+  
+  /// HELPERS //////////////////
   
   protected void resetTestCounts() {
   	TestStartExecutionListener.countWithLoopCounter.set(0);

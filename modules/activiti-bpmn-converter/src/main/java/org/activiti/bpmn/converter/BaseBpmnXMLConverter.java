@@ -402,6 +402,9 @@ public abstract class BaseBpmnXMLConverter implements BpmnXMLConstants {
   
   protected void writeTimerDefinition(Event parentEvent, TimerEventDefinition timerDefinition, XMLStreamWriter xtw) throws Exception {
     xtw.writeStartElement(ELEMENT_EVENT_TIMERDEFINITION);
+    if (StringUtils.isNotEmpty(timerDefinition.getCalendarName())) {
+      writeQualifiedAttribute(ATTRIBUTE_CALENDAR_NAME, timerDefinition.getCalendarName(), xtw);
+    }
     boolean didWriteExtensionStartElement = BpmnXMLUtil.writeExtensionElements(timerDefinition, false, xtw);
     if (didWriteExtensionStartElement) {
       xtw.writeEndElement();
@@ -415,7 +418,7 @@ public abstract class BaseBpmnXMLConverter implements BpmnXMLConstants {
       xtw.writeStartElement(ATTRIBUTE_TIMER_CYCLE);
 
       if (StringUtils.isNotEmpty(timerDefinition.getEndDate())) {
-        xtw.writeAttribute(ACTIVITI_EXTENSIONS_PREFIX, ACTIVITI_EXTENSIONS_NAMESPACE,ATTRIBUTE_END_DATE,timerDefinition.getEndDate());
+        xtw.writeAttribute(ACTIVITI_EXTENSIONS_PREFIX, ACTIVITI_EXTENSIONS_NAMESPACE, ATTRIBUTE_END_DATE,timerDefinition.getEndDate());
       }
 
       xtw.writeCharacters(timerDefinition.getTimeCycle());

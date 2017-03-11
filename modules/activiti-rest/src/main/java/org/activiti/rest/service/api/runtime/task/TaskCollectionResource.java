@@ -14,6 +14,7 @@
 package org.activiti.rest.service.api.runtime.task;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -75,8 +76,16 @@ public class TaskCollectionResource extends TaskBaseResource {
       request.setAssignee(requestParams.get("assignee"));
     }
     
+    if (requestParams.containsKey("assigneeLike")) {
+      request.setAssigneeLike(requestParams.get("assigneeLike"));
+    }
+    
     if (requestParams.containsKey("owner")) {
       request.setOwner(requestParams.get("owner"));
+    }
+    
+    if (requestParams.containsKey("ownerLike")) {
+      request.setOwnerLike(requestParams.get("ownerLike"));
     }
     
     if (requestParams.containsKey("unassigned")) {
@@ -108,6 +117,10 @@ public class TaskCollectionResource extends TaskBaseResource {
       request.setCandidateGroupIn(groups);
     }
     
+    if (requestParams.containsKey("processDefinitionId")) {
+      request.setProcessDefinitionId(requestParams.get("processDefinitionId"));
+    }
+    
     if (requestParams.containsKey("processDefinitionKey")) {
       request.setProcessDefinitionKey(requestParams.get("processDefinitionKey"));
     }
@@ -127,9 +140,19 @@ public class TaskCollectionResource extends TaskBaseResource {
     if (requestParams.containsKey("processInstanceId")) {
       request.setProcessInstanceId(requestParams.get("processInstanceId"));
     }
-    
+
+    if (requestParams.containsKey("processInstanceIdIn")) {
+      String[] processInstanceIds = requestParams.get("processInstanceIdIn").split(",");
+      List<String> ids = Arrays.asList(processInstanceIds);
+      request.setProcessInstanceIdIn(ids);
+    }
+
     if (requestParams.containsKey("processInstanceBusinessKey")) {
       request.setProcessInstanceBusinessKey(requestParams.get("processInstanceBusinessKey"));
+    }
+    
+    if (requestParams.containsKey("processInstanceBusinessKeyLike")) {
+      request.setProcessInstanceBusinessKeyLike(requestParams.get("processInstanceBusinessKeyLike"));
     }
     
     if (requestParams.containsKey("executionId")) {
@@ -200,6 +223,10 @@ public class TaskCollectionResource extends TaskBaseResource {
       request.setCandidateOrAssigned(requestParams.get("candidateOrAssigned"));
     }
     
+    if (requestParams.containsKey("category")) {
+      request.setCategory(requestParams.get("category"));
+    }
+
     return getTasksFromQueryRequest(request, requestParams);
   }
   

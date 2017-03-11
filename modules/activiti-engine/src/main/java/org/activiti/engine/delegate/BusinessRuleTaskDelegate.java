@@ -10,14 +10,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.activiti.engine.delegate;
 
-/**
- * Class that provides helper operations for use in the {@link JavaDelegate} class.
- * 
- * @author Joram Barrez
- */
-public class JavaDelegateHelper {
+import org.activiti.engine.impl.pvm.delegate.ActivityBehavior;
 
+public interface BusinessRuleTaskDelegate extends ActivityBehavior {
+  
+  void addRuleVariableInputIdExpression(Expression inputId);
+  
+  void addRuleIdExpression(Expression inputId);
+  
+  void setExclude(boolean exclude);
+  
+  void setResultVariable(String resultVariableName);
 }

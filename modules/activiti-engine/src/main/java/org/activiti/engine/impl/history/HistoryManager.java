@@ -62,10 +62,9 @@ public interface HistoryManager extends Session {
 	public abstract void recordActivityEnd(ExecutionEntity executionEntity);
 
 	/**
-	 * Record the end of a start-task, if activity history is enabled.
+	 * Record the end of a start event, if activity history is enabled.
 	 */
-	public abstract void recordStartEventEnded(String executionId,
-			String activityId);
+	public abstract void recordStartEventEnded(ExecutionEntity execution, String activityId);
 
 	/**
 	 * Finds the {@link HistoricActivityInstanceEntity} that is active in the given
@@ -166,14 +165,17 @@ public interface HistoryManager extends Session {
 	/**
 	 * Record task execution id change, if audit history is enabled.
 	 */
-	public abstract void recordTaskExecutionIdChange(String taskId,
-			String executionId);
+	public abstract void recordTaskExecutionIdChange(String taskId, String executionId);
 
 	/**
 	 * Record task definition key change, if audit history is enabled.
 	 */
-	public abstract void recordTaskDefinitionKeyChange(TaskEntity task,
-			String taskDefinitionKey);
+	public abstract void recordTaskDefinitionKeyChange(TaskEntity task, String taskDefinitionKey);
+	
+	/**
+	 * Record a change of the process-definition id of a task instance, if activity history is enabled.
+	 */
+	public abstract void recordTaskProcessDefinitionChange(String taskId, String processDefinitionId);
 
 	/**
 	 * Record a variable has been created, if audit history is enabled.
