@@ -45,4 +45,6 @@ and then pack with
 
     $ ./gradlew clean pack
     
-and you could find the `activiti-web-designer-xxx.jar` at `modules/activiti-webapp-explorer2/build/libs`
+and you could find the `activiti-web-designer-xxx.jar` at `modules/activiti-webapp-explorer2/build/libs`.
+
+Use `./gradlew upload` could upload the archive to your maven repository.
