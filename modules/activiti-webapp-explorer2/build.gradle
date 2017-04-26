@@ -1,9 +1,25 @@
-apply plugin: 'java'
+allprojects {
+    repositories {
+        maven {
+            url "${nexusUrl}/repository/maven-public"
+            credentials(PasswordCredentials) {
+                username = nexusUsername
+                password = nexusPassword
+            }
+        }
+    }
+}
 
-def version = '5.22.0'
+apply plugin: 'java'
+apply plugin: 'maven'
+
+group = 'org.activiti'
+// artifact = 'activiti-web-designer'
+archivesBaseName = 'activiti-webapp-explorer2'
+version = '5.22.0-web-designer'
 
 task pack(type: Jar) {
-    baseName = "activiti-web-designer-${version}"
+    // baseName = "activiti-web-designer"
     metaInf {
         into 'resources'
         from 'src/main/webapp'
@@ -18,5 +34,22 @@ task pack(type: Jar) {
                    'Implementation-Title': 'Activiti Web Designer from Explorer',
                    'Implementation-Version': version,
                    'Implementation-URL': 'https://github.com/AlphaHinex/Activiti/tree/web-designer')
+    }
+}
+
+artifacts {
+    archives pack
+}
+compileJava.deleteAllActions()
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "${nexusUrl}/repository/maven-releases") {
+                authentication(userName: nexusUsername, password: nexusPassword)
+            }
+            snapshotRepository(url: "${nexusUrl}/repository/maven-snapshots") {
+                authentication(userName: nexusUsername, password: nexusPassword)
+            }
+        }
     }
 }
