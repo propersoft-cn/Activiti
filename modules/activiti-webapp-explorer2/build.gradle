@@ -13,13 +13,11 @@ allprojects {
 apply plugin: 'java'
 apply plugin: 'maven'
 
-group = 'org.activiti'
-// artifact = 'activiti-web-designer'
-archivesBaseName = 'activiti-webapp-explorer2'
-version = '5.22.0-web-designer'
+group = 'com.proper.enterprise.platform'
+archivesBaseName = 'activiti-web-designer'
+version = '5.22.0'
 
 task pack(type: Jar) {
-    // baseName = "activiti-web-designer"
     metaInf {
         into 'resources'
         from 'src/main/webapp'
