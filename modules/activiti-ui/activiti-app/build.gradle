@@ -15,7 +15,7 @@ apply plugin: 'maven'
 
 group = 'com.proper.enterprise.platform'
 archivesBaseName = 'activiti-web-designer'
-version = '6.0.0'
+version = '6.0.0-SNAPSHOT'
 
 task pack(type: Jar) {
     metaInf {
