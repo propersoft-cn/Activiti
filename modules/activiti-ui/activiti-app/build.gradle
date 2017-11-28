@@ -21,10 +21,6 @@ task pack(type: Jar) {
     metaInf {
         into 'resources'
         from 'src/main/webapp'
-        include ('diagram-viewer/**', 'editor-app/**', 'modeler.html')
-        exclude 'editor-app/app-cfg.js'
-        exclude 'editor-app/configuration/toolbar-custom-actions.js'
-        exclude 'editor-app/configuration/properties-custom-controllers.js'
     }
     manifest {
         attributes('Created-By': 'Gradle',
