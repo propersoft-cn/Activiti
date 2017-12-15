@@ -22,7 +22,7 @@ Static resources are packed under `META-INF/resources/` in the jar, which could 
 
 ### Current version
 
-Now this branch has merged `activiti-6.0.0` tag, and you can find diff [here](https://github.com/Activiti/Activiti/compare/activiti-6.0.0...propersoft-cn:web-designer-v6)
+Now this branch has merged [activiti-6.0.0](https://github.com/Activiti/Activiti/tree/activiti-6.0.0) tag, and you can find diff [here](https://github.com/Activiti/Activiti/compare/activiti-6.0.0...propersoft-cn:web-designer-v6)
 
 ### How to use
 
