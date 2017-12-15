@@ -22,13 +22,13 @@ Static resources are packed under `META-INF/resources/` in the jar, which could 
 
 ### Current version
 
-Now this branch has merged `activiti-6.0.0` tag, and you can find diff [here](https://github.com/Activiti/Activiti/compare/activiti-6.0.0...AlphaHinex:web-designer-v6)
+Now this branch has merged `activiti-6.0.0` tag, and you can find diff [here](https://github.com/Activiti/Activiti/compare/activiti-6.0.0...propersoft-cn:web-designer-v6)
 
 ### How to use
 
 Clone this repo and add upstream, you should only do this once:
 
-    $ git clone https://github.com/AlphaHinex/Activiti.git
+    $ git clone https://github.com/propersoft-cn/Activiti.git
     $ cd Activiti
     $ git remote add upstream https://github.com/Activiti/Activiti.git
 
