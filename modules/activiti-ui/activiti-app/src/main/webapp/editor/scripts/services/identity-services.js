@@ -106,7 +106,7 @@ angular.module('activitiModeler').service('RoleService', ['$http', '$q',
 
             return httpAsPromise({
                 method: 'GET',
-                url: ACTIVITI.CONFIG.contextRoot + '/app/rest/editor-roles',
+                url: ACTIVITI.CONFIG.contextRoot + '/editor-roles',
                 params: params
             });
         };
