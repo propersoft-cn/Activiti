@@ -79,3 +79,35 @@ angular.module('activitiModeler').service('GroupService', ['$http', '$q',
             });
         };
     }]);
+
+angular.module('activitiModeler').service('RoleService', ['$http', '$q',
+    function ($http, $q) {
+
+        var httpAsPromise = function(options) {
+            var deferred = $q.defer();
+            $http(options).
+                success(function (response, status, headers, config) {
+                    deferred.resolve(response);
+                })
+                .error(function (response, status, headers, config) {
+                    deferred.reject(response);
+                });
+            return deferred.promise;
+        };
+
+        /*
+         * Filter roles based on a filter text.
+         */
+        this.getFilteredRoles = function (filterText) {
+            var params;
+            if(filterText) {
+                params = {filter: filterText};
+            }
+
+            return httpAsPromise({
+                method: 'GET',
+                url: ACTIVITI.CONFIG.contextRoot + '/editor-roles',
+                params: params
+            });
+        };
+    }]);
