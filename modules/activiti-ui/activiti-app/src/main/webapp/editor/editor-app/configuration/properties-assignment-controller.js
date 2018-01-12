@@ -29,7 +29,7 @@ angular.module('activitiModeler').controller('KisBpmAssignmentCtrl', [ '$scope',
 }]);
 
 angular.module('activitiModeler').controller('KisBpmAssignmentPopupCtrl',
-    [ '$rootScope', '$scope', '$translate', '$http', 'UserService', 'GroupService', function($rootScope, $scope, $translate, $http, UserService, GroupService) {
+    [ '$rootScope', '$scope', '$translate', '$http', 'UserService', 'GroupService', 'RoleService', function($rootScope, $scope, $translate, $http, UserService, GroupService, RoleService) {
 
     // Put json representing assignment on scope
     if ($scope.property.value !== undefined && $scope.property.value !== null
@@ -64,7 +64,8 @@ angular.module('activitiModeler').controller('KisBpmAssignmentPopupCtrl',
         {id: "initiator", title: $translate.instant('PROPERTY.ASSIGNMENT.IDM.DROPDOWN.INITIATOR')},
         {id: "user", title: $translate.instant('PROPERTY.ASSIGNMENT.IDM.DROPDOWN.USER')},
         {id: "users", title: $translate.instant('PROPERTY.ASSIGNMENT.IDM.DROPDOWN.USERS')},
-        {id: "groups", title: $translate.instant('PROPERTY.ASSIGNMENT.IDM.DROPDOWN.GROUPS')}
+        {id: "groups", title: $translate.instant('PROPERTY.ASSIGNMENT.IDM.DROPDOWN.GROUPS')},
+        {id: "roles", title: $translate.instant('PROPERTY.ASSIGNMENT.IDM.DROPDOWN.GROUPS')}
     ];
 
     if ($scope.assignment.idm && $scope.assignment.idm.type) {
@@ -123,6 +124,10 @@ angular.module('activitiModeler').controller('KisBpmAssignmentPopupCtrl',
     }
 
     initStaticContextForEditing($scope);
+
+    $scope.$watch('popup.roleFilter', function () {
+        $scope.updateRoleFilter();
+    });
 
     $scope.$watch('popup.groupFilter', function () {
         $scope.updateGroupFilter();
@@ -183,6 +188,12 @@ angular.module('activitiModeler').controller('KisBpmAssignmentPopupCtrl',
                 $scope.resetGroupSelection();
             });
         }
+    };
+
+    $scope.updateRoleFilter = function() {
+        RoleService.getFilteredRoles($scope.popup.roleFilter).then(function(result) {
+            console.debug(result);
+        });
     };
 
     $scope.confirmUser = function(user) {
