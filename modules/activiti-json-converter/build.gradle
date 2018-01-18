@@ -1,0 +1,17 @@
+archivesBaseName = 'activiti-json-converter'
+
+def osPrefix = System.properties.get('os.name').toLowerCase().matches(/windows.*/) ? ['cmd', '/c'] : []
+
+task 'mvnPkg'(type: Exec) {
+    //workingDir "modules/activiti-json-converter"
+    commandLine osPrefix + ['mvn', '-q', '-DskipTests', 'clean', 'package']
+}
+
+task pack(type: Jar, dependsOn: mvnPkg) {
+    from 'target/classes'
+    exclude 'org/activiti/editor/constants/StencilConstants.class'
+}
+
+artifacts {
+    archives pack
+}

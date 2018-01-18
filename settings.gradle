@@ -1,1 +1,2 @@
 include 'modules/activiti-ui/activiti-app'
+include 'modules/activiti-json-converter'
