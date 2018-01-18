@@ -18,6 +18,8 @@ allprojects {
 
 apply plugin: 'idea'
 
+def osPrefix = System.properties.get('os.name').toLowerCase().matches(/windows.*/) ? ['cmd', '/c'] : []
+
 subprojects {
     apply plugin: 'idea'
     apply plugin: 'eclipse'
@@ -26,6 +28,11 @@ subprojects {
 
     group = 'com.proper.enterprise.platform'
     version = '6.0.0-SNAPSHOT'
+
+    task 'mvnPkg'(type: Exec) {
+        // workingDir "modules/${project.name}"
+        commandLine osPrefix + ['mvn', '-q', '-DskipTests', 'clean', 'package']
+    }
 
     compileJava.deleteAllActions()
 
