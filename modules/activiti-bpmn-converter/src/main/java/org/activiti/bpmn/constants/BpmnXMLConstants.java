@@ -1,9 +1,9 @@
 /* Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,7 +55,7 @@ public interface BpmnXMLConstants {
   public static final String ELEMENT_FLOWNODE_REF = "flowNodeRef";
   public static final String ATTRIBUTE_PROCESS_REF = "processRef";
   public static final String ELEMENT_RESOURCE = "resource";
-  
+
   public static final String ELEMENT_PROCESS = "process";
   public static final String ATTRIBUTE_PROCESS_EXECUTABLE = "isExecutable";
   public static final String ELEMENT_POTENTIAL_STARTER = "potentialStarter";
@@ -186,6 +186,7 @@ public interface BpmnXMLConstants {
   public static final String ATTRIBUTE_TASK_USER_OWNER = "owner";
   public static final String ATTRIBUTE_TASK_USER_CANDIDATEUSERS = "candidateUsers";
   public static final String ATTRIBUTE_TASK_USER_CANDIDATEGROUPS = "candidateGroups";
+  public static final String ATTRIBUTE_TASK_USER_CANDIDATEROLES = "candidateRoles";
   public static final String ATTRIBUTE_TASK_USER_DUEDATE = "dueDate";
   public static final String ATTRIBUTE_TASK_USER_BUSINESS_CALENDAR_NAME = "businessCalendarName";
   public static final String ATTRIBUTE_TASK_USER_CATEGORY = "category";
