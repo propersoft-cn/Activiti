@@ -1,9 +1,9 @@
 /* Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,13 +34,14 @@ public class UserTask extends Task {
   protected String extensionId;
   protected List<String> candidateUsers = new ArrayList<String>();
   protected List<String> candidateGroups = new ArrayList<String>();
+  protected List<String> candidateRoles = new ArrayList<>();
   protected List<FormProperty> formProperties = new ArrayList<FormProperty>();
   protected List<ActivitiListener> taskListeners = new ArrayList<ActivitiListener>();
   protected String skipExpression;
 
-  protected Map<String, Set<String>> customUserIdentityLinks = new HashMap<String, Set<String>>(); 
+  protected Map<String, Set<String>> customUserIdentityLinks = new HashMap<String, Set<String>>();
   protected Map<String, Set<String>> customGroupIdentityLinks = new HashMap<String, Set<String>>();
-  
+
   protected List<CustomProperty> customProperties = new ArrayList<CustomProperty>();
 
   public String getAssignee() {
@@ -110,7 +111,7 @@ public class UserTask extends Task {
   public boolean isExtended() {
     return extensionId != null && !extensionId.isEmpty();
   }
-	public List<String> getCandidateUsers() {
+  public List<String> getCandidateUsers() {
     return candidateUsers;
   }
 
@@ -125,6 +126,14 @@ public class UserTask extends Task {
   public void setCandidateGroups(List<String> candidateGroups) {
     this.candidateGroups = candidateGroups;
   }
+
+    public List<String> getCandidateRoles() {
+        return candidateRoles;
+    }
+
+    public void setCandidateRoles(List<String> candidateRoles) {
+        this.candidateRoles = candidateRoles;
+    }
 
   public List<FormProperty> getFormProperties() {
     return formProperties;
@@ -179,14 +188,14 @@ public class UserTask extends Task {
   public void setCustomGroupIdentityLinks(Map<String, Set<String>> customGroupIdentityLinks) {
     this.customGroupIdentityLinks = customGroupIdentityLinks;
   }
-  
+
   public List<CustomProperty> getCustomProperties() {
     return customProperties;
   }
   public void setCustomProperties(List<CustomProperty> customProperties) {
     this.customProperties = customProperties;
   }
-  
+
   public String getSkipExpression() {
     return skipExpression;
   }
@@ -211,9 +220,10 @@ public class UserTask extends Task {
     setCategory(otherElement.getCategory());
     setExtensionId(otherElement.getExtensionId());
     setSkipExpression(otherElement.getSkipExpression());
-    
+
     setCandidateGroups(new ArrayList<String>(otherElement.getCandidateGroups()));
     setCandidateUsers(new ArrayList<String>(otherElement.getCandidateUsers()));
+    setCandidateRoles(new ArrayList<>(otherElement.getCandidateRoles()));
 
     setCustomGroupIdentityLinks(otherElement.customGroupIdentityLinks);
     setCustomUserIdentityLinks(otherElement.customUserIdentityLinks);
