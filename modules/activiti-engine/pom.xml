@@ -4,7 +4,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <name>Activiti - Engine</name>
-  <artifactId>activiti-engine</artifactId>
+  <groupId>com.proper.uip</groupId>
+  <artifactId>activiti-engine-proper</artifactId>
+  <version>5.15</version>
 
   <parent>
     <groupId>org.activiti</groupId>
