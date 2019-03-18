@@ -49,6 +49,8 @@ public interface HistoricVariableInstanceQuery extends Query<HistoricVariableIns
    */
   HistoricVariableInstanceQuery variableValueEquals(String variableName, Object variableValue);
 
+  HistoricVariableInstanceQuery variableValueLike(String variableName, Object variableValue);
+
   HistoricVariableInstanceQuery orderByProcessInstanceId();
   
   HistoricVariableInstanceQuery orderByVariableName();

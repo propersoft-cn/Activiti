@@ -117,6 +117,19 @@ public class HistoricVariableInstanceQueryImpl extends AbstractQuery<HistoricVar
     return this;
   }
 
+  @Override
+  public HistoricVariableInstanceQuery variableValueLike(String variableName, Object variableValue) {
+    if (variableName == null) {
+      throw new ActivitiIllegalArgumentException("variableName is null");
+    }
+    if (variableValue == null) {
+      throw new ActivitiIllegalArgumentException("variableValue is null");
+    }
+    this.variableName = variableName;
+    queryVariableValue = new QueryVariableValue(variableName, variableValue, QueryOperator.LIKE, true);
+    return this;
+  }
+
   public HistoricVariableInstanceQuery variableNameLike(String variableNameLike) {
     if (variableNameLike == null) {
       throw new ActivitiIllegalArgumentException("variableNameLike is null");
