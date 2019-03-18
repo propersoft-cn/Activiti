@@ -9,9 +9,19 @@ proper-activiti-5.15 branch
 
 Differents with [activiti-5.15](https://github.com/Activiti/Activiti/tree/activiti-5.15) are [here](https://github.com/Activiti/Activiti/compare/activiti-5.15...propersoft-cn:proper-activiti-5.15)
 
-### How to use
+### How to pack and deploy
 
 ```
 $ cd modules/activiti-engine
 $ mvn clean package deploy -DskipTests -P distro
+```
+
+### How to use
+
+```
+<dependency>
+    <groupId>com.proper.uip</groupId>
+    <artifactId>activiti-engine-proper</artifactId>
+    <version>5.15</version>
+</dependency>
 ```
