@@ -39,9 +39,11 @@ public class HistoricProcessInstanceQueryImpl extends AbstractVariableQueryImpl<
   protected boolean unfinished = false;
   protected String startedBy;
   protected String assigneeWith;
+  protected Set<String> assignees;
   protected String superProcessInstanceId;
   protected boolean excludeSubprocesses;
   protected List<String> processKeyNotIn;
+  protected Date taskEndDate;
   protected Date startedBefore;
   protected Date startedAfter;
   protected Date finishedBefore;
@@ -312,7 +314,13 @@ public class HistoricProcessInstanceQueryImpl extends AbstractVariableQueryImpl<
       return this;
     }
 
-    public HistoricProcessInstanceQuery taskFinishedWithDefinitionKey(String taskFinishedWithDefinitionKey){
+  @Override
+  public HistoricProcessInstanceQuery assignedBy(Set<String> assignees) {
+    this.assignees = assignees;
+    return this;
+  }
+
+  public HistoricProcessInstanceQuery taskFinishedWithDefinitionKey(String taskFinishedWithDefinitionKey){
     this.taskFinishedWithDefinitionKey = taskFinishedWithDefinitionKey;
     return this;  
     }
@@ -344,8 +352,14 @@ public class HistoricProcessInstanceQueryImpl extends AbstractVariableQueryImpl<
     public Set<String> getStartedByUserIds() {
     return this.startedByUserIds;
     }
-    
-    public String getTaskFinishedWithDefinitionKey() {
+
+  @Override
+  public HistoricProcessInstanceQuery validByTaskEndDate(Date date) {
+    this.taskEndDate = date;
+    return this;
+  }
+
+  public String getTaskFinishedWithDefinitionKey() {
     return this.taskFinishedWithDefinitionKey;
     }
 

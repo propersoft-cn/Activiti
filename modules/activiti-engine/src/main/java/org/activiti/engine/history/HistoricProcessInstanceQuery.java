@@ -47,7 +47,9 @@ public interface HistoricProcessInstanceQuery extends Query<HistoricProcessInsta
 
   /**Only select historic process instances for the given process assignee with(zhanghuafeng added)*/
   HistoricProcessInstanceQuery assigneeWith(String assigneeWith);
-  
+
+  HistoricProcessInstanceQuery assignedBy(Set<String> assignees);
+
   /**Only select historic process instances for the given process task finished with task definition key with(zhanghuafeng added)*/
   HistoricProcessInstanceQuery taskFinishedWithDefinitionKey(String taskFinishedWithDefinitionKey);
   
@@ -175,6 +177,8 @@ public interface HistoricProcessInstanceQuery extends Query<HistoricProcessInsta
   
   /** Only select historic process instance that are started by the given user. */
   HistoricProcessInstanceQuery startedByUserIds(Set<String> userIds);
+
+  HistoricProcessInstanceQuery validByTaskEndDate(Date date);
   
   /** Only select process instances that have the given tenant id. */
   HistoricProcessInstanceQuery processInstanceTenantId(String tenantId);

@@ -19,7 +19,7 @@
 <mapper namespace="org.activiti.engine.impl.persistence.entity.HistoricProcessInstanceEntity">
 
   <!-- HISTORIC PROCESS INSTANCE INSERT -->
-  
+
   <insert id="insertHistoricProcessInstance" parameterType="org.activiti.engine.impl.persistence.entity.HistoricProcessInstanceEntity">
       insert into ${prefix}ACT_HI_PROCINST (
         ID_,
@@ -53,7 +53,7 @@
   </insert>
 
   <!-- HISTORIC PROCESS INSTANCE UPDATE -->
-  
+
   <update id="updateHistoricProcessInstance" parameterType="org.activiti.engine.impl.persistence.entity.HistoricProcessInstanceEntity">
     update ${prefix}ACT_HI_PROCINST set
       PROC_DEF_ID_ = #{processDefinitionId, jdbcType=VARCHAR},
@@ -67,13 +67,13 @@
   </update>
 
   <!-- HISTORIC PROCESS INSTANCE DELETE -->
-  
+
   <delete id="deleteHistoricProcessInstance">
     delete from ${prefix}ACT_HI_PROCINST where PROC_INST_ID_ = #{processInstanceId}
   </delete>
 
   <!-- HISTORIC PROCESS INSTANCE RESULT MAP -->
-  
+
   <resultMap id="historicProcessInstanceResultMap" type="org.activiti.engine.impl.persistence.entity.HistoricProcessInstanceEntity">
     <id property="id" column="ID_" jdbcType="VARCHAR" />
     <result property="processInstanceId" column="PROC_INST_ID_" jdbcType="VARCHAR" />
@@ -89,7 +89,7 @@
     <result property="deleteReason" column="DELETE_REASON_" jdbcType="VARCHAR" />
     <result property="tenantId" column="TENANT_ID_" jdbcType="VARCHAR" />
   </resultMap>
-  
+
   <resultMap id="historicProcessInstanceAndVariablesResultMap" type="org.activiti.engine.impl.persistence.entity.HistoricProcessInstanceEntity">
     <id property="id" column="ID_" jdbcType="VARCHAR" />
     <result property="processInstanceId" column="PROC_INST_ID_" jdbcType="VARCHAR" />
@@ -121,7 +121,7 @@
   </resultMap>
 
   <!-- HISTORIC PROCESS INSTANCE SELECT -->
-  
+
   <select id="selectHistoricProcessInstance" resultMap="historicProcessInstanceResultMap">
     select * from ${prefix}ACT_HI_PROCINST where PROC_INST_ID_ = #{processInstanceId}
   </select>
@@ -131,7 +131,7 @@
     from ${prefix}ACT_HI_PROCINST 
     where PROC_DEF_ID_ = #{parameter}
   </select>
-  
+
 
   <select id="selectHistoricProcessInstancesByQueryCriteria" parameterType="org.activiti.engine.impl.HistoricProcessInstanceQueryImpl" resultMap="historicProcessInstanceResultMap">
     ${limitBefore}
@@ -140,30 +140,30 @@
     ${orderBy}
     ${limitAfter}
   </select>
-  
+
   <select id="selectHistoricProcessInstanceCountByQueryCriteria" parameterType="org.activiti.engine.impl.HistoricProcessInstanceQueryImpl" resultType="long">
     select count(distinct RES.ID_)
     <include refid="selectHistoricProcessInstancesByQueryCriteriaSql"/>
   </select>
-  
-  <sql id="selectHistoricProcessInstancesByQueryCriteriaSql">  
+
+  <sql id="selectHistoricProcessInstancesByQueryCriteriaSql">
     from ${prefix}ACT_HI_PROCINST RES
     <include refid="commonSelectHistoricProcessInstancesByQueryCriteriaSql"/>
   </sql>
-  
+
   <select id="selectHistoricProcessInstancesWithVariablesByQueryCriteria" parameterType="org.activiti.engine.impl.HistoricProcessInstanceQueryImpl" resultMap="historicProcessInstanceAndVariablesResultMap">
     ${limitBefore}
     select distinct RES.*,
     VAR.ID_ as VAR_ID_, VAR.NAME_ as VAR_NAME_, VAR.VAR_TYPE_ as VAR_TYPE_, VAR.REV_ as VAR_REV_,
     VAR.PROC_INST_ID_ as VAR_PROC_INST_ID_, VAR.EXECUTION_ID_ as VAR_EXECUTION_ID_, VAR.TASK_ID_ as VAR_TASK_ID_,
-    VAR.BYTEARRAY_ID_ as VAR_BYTEARRAY_ID_, VAR.DOUBLE_ as VAR_DOUBLE_, 
+    VAR.BYTEARRAY_ID_ as VAR_BYTEARRAY_ID_, VAR.DOUBLE_ as VAR_DOUBLE_,
     VAR.TEXT_ as VAR_TEXT_, VAR.TEXT2_ as VAR_TEXT2_, VAR.LAST_UPDATED_TIME_ as VAR_LAST_UPDATED_TIME_, VAR.LONG_ as VAR_LONG_
     ${limitBetween}
-    <include refid="selectHistoricProcessInstancesWithVariablesByQueryCriteriaSql"/> 
+    <include refid="selectHistoricProcessInstancesWithVariablesByQueryCriteriaSql"/>
     ${orderBy}
     ${limitAfter}
   </select>
-  
+
   <select id="selectHistoricProcessInstancesWithVariablesByQueryCriteria_mssql_or_db2" parameterType="org.activiti.engine.impl.HistoricProcessInstanceQueryImpl" resultMap="historicProcessInstanceAndVariablesResultMap">
     ${limitBefore}
     select distinct TEMPRES_ID_ as ID_,
@@ -174,39 +174,39 @@
     TEMPRES_DELETE_REASON_ as DELETE_REASON_,
     TEMPVAR_ID_ as VAR_ID_, TEMPVAR_NAME_ as VAR_NAME_, TEMPVAR_TYPE_ as VAR_TYPE_, TEMPVAR_REV_ as VAR_REV_,
     TEMPVAR_PROC_INST_ID_ as VAR_PROC_INST_ID_, TEMPVAR_EXECUTION_ID_ as VAR_EXECUTION_ID_, TEMPVAR_TASK_ID_ as VAR_TASK_ID_,
-    TEMPVAR_BYTEARRAY_ID_ as VAR_BYTEARRAY_ID_, TEMPVAR_DOUBLE_ as VAR_DOUBLE_, 
+    TEMPVAR_BYTEARRAY_ID_ as VAR_BYTEARRAY_ID_, TEMPVAR_DOUBLE_ as VAR_DOUBLE_,
     TEMPVAR_TEXT_ as VAR_TEXT_, TEMPVAR_TEXT2_ as VAR_TEXT2_, TEMPVAR_LAST_UPDATED_TIME_ as VAR_LAST_UPDATED_TIME_, TEMPVAR_LONG_ as VAR_LONG_
     ${limitOuterJoinBetween}
     RES.ID_ as TEMPRES_ID_, RES.BUSINESS_KEY_ as TEMPRES_BUSINESS_KEY_,
-    RES.PROC_DEF_ID_ as TEMPRES_PROC_DEF_ID_, RES.PROC_INST_ID_ as TEMPRES_PROC_INST_ID_, 
+    RES.PROC_DEF_ID_ as TEMPRES_PROC_DEF_ID_, RES.PROC_INST_ID_ as TEMPRES_PROC_INST_ID_,
     RES.START_TIME_ as TEMPRES_START_TIME_, RES.END_TIME_ as TEMPRES_END_TIME_,
     RES.DURATION_ as TEMPRES_DURATION_, RES.START_USER_ID_ as TEMPRES_START_USER_ID_,
     RES.START_ACT_ID_ as TEMPRES_START_ACT_ID_, RES.END_ACT_ID_ as TEMPRES_END_ACT_ID_,
     RES.SUPER_PROCESS_INSTANCE_ID_ as TEMPRES_SUPER_PROCESS_INSTANCE_ID_, RES.DELETE_REASON_ as TEMPRES_DELETE_REASON_,
     VAR.ID_ as TEMPVAR_ID_, VAR.NAME_ as TEMPVAR_NAME_, VAR.VAR_TYPE_ as TEMPVAR_TYPE_, VAR.REV_ as TEMPVAR_REV_,
     VAR.PROC_INST_ID_ as TEMPVAR_PROC_INST_ID_, VAR.EXECUTION_ID_ as TEMPVAR_EXECUTION_ID_, VAR.TASK_ID_ as TEMPVAR_TASK_ID_,
-    VAR.BYTEARRAY_ID_ as TEMPVAR_BYTEARRAY_ID_, VAR.DOUBLE_ as TEMPVAR_DOUBLE_, 
+    VAR.BYTEARRAY_ID_ as TEMPVAR_BYTEARRAY_ID_, VAR.DOUBLE_ as TEMPVAR_DOUBLE_,
     VAR.TEXT_ as TEMPVAR_TEXT_, VAR.TEXT2_ as TEMPVAR_TEXT2_, VAR.LAST_UPDATED_TIME_ as TEMPVAR_LAST_UPDATED_TIME_, VAR.LONG_ as TEMPVAR_LONG_
-    <include refid="selectHistoricProcessInstancesWithVariablesByQueryCriteriaSql"/> 
+    <include refid="selectHistoricProcessInstancesWithVariablesByQueryCriteriaSql"/>
     ${orderBy}
     ${limitAfter}
   </select>
-  
-  <sql id="selectHistoricProcessInstancesWithVariablesByQueryCriteriaSql">  
+
+  <sql id="selectHistoricProcessInstancesWithVariablesByQueryCriteriaSql">
     from ${prefix}ACT_HI_PROCINST RES
     <if test="includeProcessVariables">
       left outer join ${prefix}ACT_HI_VARINST VAR ON RES.PROC_INST_ID_ = VAR.EXECUTION_ID_ and VAR.TASK_ID_ is null
     </if>
     <include refid="commonSelectHistoricProcessInstancesByQueryCriteriaSql"/>
   </sql>
-  
+
   <sql id="commonSelectHistoricProcessInstancesByQueryCriteriaSql">
     <if test="processKeyNotIn != null || processDefinitionKey != null">
       inner join ${prefix}ACT_RE_PROCDEF DEF on RES.PROC_DEF_ID_ = DEF.ID_
     </if>
     <foreach collection="queryVariableValues" index="index" item="queryVariableValue">
       inner join ${prefix}ACT_HI_VARINST  A${index} on RES.PROC_INST_ID_ = A${index}.PROC_INST_ID_
-    </foreach>    
+    </foreach>
     <where>
       <if test="processInstanceId != null">
         RES.PROC_INST_ID_ = #{processInstanceId}
@@ -220,9 +220,9 @@
       <if test="processDefinitionId != null">
         and RES.PROC_DEF_ID_ = #{processDefinitionId}
       </if>
-      
-      
-      
+
+
+
       <!-- add by zhanghuafeng begin-->
       <if test="processDefinitionIds != null and !processDefinitionIds.isEmpty()">
         and RES.PROC_DEF_ID_ in
@@ -231,37 +231,43 @@
         </foreach>
       </if>
       <if test="assigneeWith != null">
-         and exists (
-          select HTI.ID_ 
-          from ${prefix}ACT_HI_TASKINST HTI 
-          where RES.PROC_INST_ID_=HTI.PROC_INST_ID_ and HTI.ASSIGNEE_=#{assigneeWith})
+        and exists (
+        select HTI.ID_
+        from ${prefix}ACT_HI_TASKINST HTI
+        where RES.PROC_INST_ID_=HTI.PROC_INST_ID_ and HTI.ASSIGNEE_=#{assigneeWith})
+      </if>
+      <if test="taskEndDate != null">
+        and not exists (
+        select HTI.ID_
+        from ${prefix}ACT_HI_TASKINST HTI
+        where RES.PROC_INST_ID_=HTI.PROC_INST_ID_ and HTI.END_TIME_ &lt; #{taskEndDate} and HTI.ASSIGNEE_ is null and HTI.DELETE_REASON_ = 'completed')
       </if>
       <if test="taskFinishedWithDefinitionKey != null">
-         and exists (
-          select HTI.ID_ 
-          from ${prefix}ACT_HI_TASKINST HTI 
-          where RES.PROC_INST_ID_=HTI.PROC_INST_ID_ and HTI.TASK_DEF_KEY_=#{taskFinishedWithDefinitionKey} and HTI.END_TIME_ is not null)
+        and exists (
+        select HTI.ID_
+        from ${prefix}ACT_HI_TASKINST HTI
+        where RES.PROC_INST_ID_=HTI.PROC_INST_ID_ and HTI.TASK_DEF_KEY_=#{taskFinishedWithDefinitionKey} and HTI.END_TIME_ is not null)
       </if>
       <if test="taskFinishedWithoutDefinitionKey != null">
-         and not exists (
-          select HTI.ID_ 
-          from ${prefix}ACT_HI_TASKINST HTI 
-          where RES.PROC_INST_ID_=HTI.PROC_INST_ID_ and HTI.TASK_DEF_KEY_=#{taskFinishedWithoutDefinitionKey} and HTI.END_TIME_ is not null)
+        and not exists (
+        select HTI.ID_
+        from ${prefix}ACT_HI_TASKINST HTI
+        where RES.PROC_INST_ID_=HTI.PROC_INST_ID_ and HTI.TASK_DEF_KEY_=#{taskFinishedWithoutDefinitionKey} and HTI.END_TIME_ is not null)
       </if>
       <if test="taskFinishedWithoutDefinitionKeys != null">
-         and not exists (
-          select HTI.ID_ 
-          from ${prefix}ACT_HI_TASKINST HTI 
-          where RES.PROC_INST_ID_=HTI.PROC_INST_ID_ 
-            and HTI.TASK_DEF_KEY_ in
-                <foreach item="item" index="index" collection="taskFinishedWithoutDefinitionKeys" open="(" separator="," close=")">
-                  #{item}
-                </foreach>
-            and HTI.END_TIME_ is not null)
+        and not exists (
+        select HTI.ID_
+        from ${prefix}ACT_HI_TASKINST HTI
+        where RES.PROC_INST_ID_=HTI.PROC_INST_ID_
+        and HTI.TASK_DEF_KEY_ in
+        <foreach item="item" index="index" collection="taskFinishedWithoutDefinitionKeys" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+        and HTI.END_TIME_ is not null)
       </if>
       <!-- add by zhanghuafeng end-->
-      
-      
+
+
       <if test="processDefinitionKey != null">
         and DEF.KEY_ = #{processDefinitionKey}
       </if>
@@ -283,8 +289,8 @@
       </if>
       <if test="processKeyNotIn != null">
         <foreach collection="processKeyNotIn" index="index" item="procDefKey">
-        and DEF.KEY_ not like #{procDefKey}
-      </foreach>
+          and DEF.KEY_ not like #{procDefKey}
+        </foreach>
       </if>
       <if test="unfinished">
         and RES.END_TIME_ IS NULL
@@ -294,7 +300,7 @@
       </if>
       <if test="involvedUser != null">
         and (
-          exists(select LINK.USER_ID_ from ${prefix}ACT_HI_IDENTITYLINK LINK where USER_ID_ = #{involvedUser} and LINK.PROC_INST_ID_ = RES.ID_)
+        exists(select LINK.USER_ID_ from ${prefix}ACT_HI_IDENTITYLINK LINK where USER_ID_ = #{involvedUser} and LINK.PROC_INST_ID_ = RES.ID_)
         )
       </if>
       <if test="startedBy != null">
@@ -305,6 +311,16 @@
         <foreach item="item" index="index" collection="startedByUserIds" open="(" separator="," close=")">
           #{item}
         </foreach>
+      </if>
+      <if test="assignees != null and !assignees.isEmpty()">
+        and exists (
+        select HTI.ID_
+        from ${prefix}ACT_HI_TASKINST HTI
+        where RES.PROC_INST_ID_=HTI.PROC_INST_ID_ and HTI.ASSIGNEE_ in
+        <foreach item="item" index="index" collection="assignees" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+        )
       </if>
       <if test="superProcessInstanceId != null">
         and RES.SUPER_PROCESS_INSTANCE_ID_ = #{superProcessInstanceId}
@@ -327,7 +343,7 @@
           and A${index}.NAME_= #{queryVariableValue.name}
         </if>
         <if test="!queryVariableValue.type.equals('null')">
-        <!-- When operator is not-equals or type of value is null, type doesn't matter! -->
+          <!-- When operator is not-equals or type of value is null, type doesn't matter! -->
           and A${index}.VAR_TYPE_ = #{queryVariableValue.type}
         </if>
         <if test="queryVariableValue.textValue != null &amp;&amp; queryVariableValue.longValue == null &amp;&amp; queryVariableValue.doubleValue == null">
@@ -346,38 +362,38 @@
           #{queryVariableValue.textValue}
         </if>
         <if test="queryVariableValue.textValue2 != null">
-        and A${index}.TEXT2_
-        <choose>
-          <when test="queryVariableValue.operator.equals('LIKE')">LIKE</when>
-          <otherwise><include refid="executionVariableOperator" /></otherwise>
-        </choose>
+          and A${index}.TEXT2_
+          <choose>
+            <when test="queryVariableValue.operator.equals('LIKE')">LIKE</when>
+            <otherwise><include refid="executionVariableOperator" /></otherwise>
+          </choose>
           #{queryVariableValue.textValue2}
         </if>
         <if test="queryVariableValue.longValue != null">
-        and A${index}.LONG_
-        <include refid="executionVariableOperator" />
-        #{queryVariableValue.longValue}
+          and A${index}.LONG_
+          <include refid="executionVariableOperator" />
+          #{queryVariableValue.longValue}
         </if>
         <if test="queryVariableValue.doubleValue != null">
-        and A${index}.DOUBLE_
-        <include refid="executionVariableOperator" />
-        #{queryVariableValue.doubleValue}
+          and A${index}.DOUBLE_
+          <include refid="executionVariableOperator" />
+          #{queryVariableValue.doubleValue}
         </if>
         <!-- Null variable type -->
         <if test="queryVariableValue.textValue == null &amp;&amp; queryVariableValue.textValue2 == null &amp;&amp; queryVariableValue.longValue == null &amp;&amp; queryVariableValue.doubleValue == null">
           <choose>
-          <when test="queryVariableValue.operator.equals('NOT_EQUALS')">
-            and (A${index}.TEXT_ is not null or A${index}.TEXT2_ is not null or A${index}.LONG_ is not null or A${index}.DOUBLE_ is not null or A${index}.BYTEARRAY_ID_ is not null)
-          </when>
-          <otherwise>
-            and A${index}.TEXT_ is null and A${index}.TEXT2_ is null and A${index}.LONG_ is null and A${index}.DOUBLE_ is null and A${index}.BYTEARRAY_ID_ is null
-          </otherwise>
-        </choose>
+            <when test="queryVariableValue.operator.equals('NOT_EQUALS')">
+              and (A${index}.TEXT_ is not null or A${index}.TEXT2_ is not null or A${index}.LONG_ is not null or A${index}.DOUBLE_ is not null or A${index}.BYTEARRAY_ID_ is not null)
+            </when>
+            <otherwise>
+              and A${index}.TEXT_ is null and A${index}.TEXT2_ is null and A${index}.LONG_ is null and A${index}.DOUBLE_ is null and A${index}.BYTEARRAY_ID_ is null
+            </otherwise>
+          </choose>
         </if>
       </foreach>
     </where>
   </sql>
-  
+
   <sql id="executionVariableOperator">
     <choose>
       <when test="queryVariableValue.operator.equals('EQUALS')">=</when>
@@ -388,10 +404,10 @@
       <when test="queryVariableValue.operator.equals('GREATER_THAN_OR_EQUAL')">&gt;=</when>
       <when test="queryVariableValue.operator.equals('LESS_THAN')">&lt;</when>
       <when test="queryVariableValue.operator.equals('LESS_THAN_OR_EQUAL')">&lt;=</when>
-   </choose>
+    </choose>
   </sql>
- 
-   <select id="selectHistoricProcessInstanceByNativeQuery" parameterType="java.util.Map" resultMap="historicProcessInstanceResultMap">
+
+  <select id="selectHistoricProcessInstanceByNativeQuery" parameterType="java.util.Map" resultMap="historicProcessInstanceResultMap">
     <if test="resultType == 'LIST_PAGE'">
       ${limitBefore}
     </if>
@@ -400,12 +416,12 @@
       ${limitAfter}
     </if>
   </select>
-  
+
   <select id="selectHistoricProcessInstanceByNativeQuery_mssql_or_db2" parameterType="java.util.Map" resultMap="historicProcessInstanceResultMap">
     <if test="resultType == 'LIST_PAGE'">
-        ${limitBeforeNativeQuery}
+      ${limitBeforeNativeQuery}
     </if>
-    ${sql} 
+    ${sql}
     <if test="resultType == 'LIST_PAGE'">
       ${limitAfter}
     </if>
