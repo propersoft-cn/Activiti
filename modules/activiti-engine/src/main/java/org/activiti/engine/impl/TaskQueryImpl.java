@@ -15,6 +15,7 @@ package org.activiti.engine.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.activiti.engine.ActivitiIllegalArgumentException;
 import org.activiti.engine.identity.Group;
@@ -51,6 +52,7 @@ public class TaskQueryImpl extends AbstractVariableQueryImpl<TaskQuery, Task> im
   protected String ownerLike;
   protected boolean unassigned = false;
   protected boolean noDelegationState = false;
+  protected List<TaskQueryVariableValue> variables = new ArrayList<TaskQueryVariableValue>();
   protected DelegationState delegationState;
   protected String candidateUser;
   protected String candidateGroup;
@@ -83,6 +85,8 @@ public class TaskQueryImpl extends AbstractVariableQueryImpl<TaskQuery, Task> im
   protected boolean includeProcessVariables = false;
   protected String userIdForCandidateAndAssignee;
   protected boolean bothCandidateAndAssigned = false;
+  protected Set<String> startUserIds;
+  protected Set<String> processDefinitionIds;
 
   public TaskQueryImpl() {
   }
@@ -283,24 +287,24 @@ public class TaskQueryImpl extends AbstractVariableQueryImpl<TaskQuery, Task> im
   }
   
   public TaskQuery taskTenantId(String tenantId) {
-  	if (tenantId == null) {
-  		throw new ActivitiIllegalArgumentException("task tenant id is null");
-  	}
-  	this.tenantId = tenantId;
-  	return this;
+    if (tenantId == null) {
+      throw new ActivitiIllegalArgumentException("task tenant id is null");
+    }
+    this.tenantId = tenantId;
+    return this;
   }
   
   public TaskQuery taskTenantIdLike(String tenantIdLike) {
-  	if (tenantIdLike == null) {
-  		throw new ActivitiIllegalArgumentException("task tenant id is null");
-  	}
-  	this.tenantIdLike = tenantIdLike;
-  	return this;
+    if (tenantIdLike == null) {
+      throw new ActivitiIllegalArgumentException("task tenant id is null");
+    }
+    this.tenantIdLike = tenantIdLike;
+    return this;
   }
   
   public TaskQuery taskWithoutTenantId() {
-  	this.withoutTenantId = true;
-  	return this;
+    this.withoutTenantId = true;
+    return this;
   }
   
   public TaskQueryImpl processInstanceId(String processInstanceId) {
@@ -339,8 +343,8 @@ public class TaskQueryImpl extends AbstractVariableQueryImpl<TaskQuery, Task> im
   }
   
   public TaskQuery taskCategory(String category) {
-  	this.category = category;
-  	return this;
+    this.category = category;
+    return this;
   }
   
   public TaskQuery taskDefinitionKey(String key) {
@@ -389,9 +393,6 @@ public class TaskQueryImpl extends AbstractVariableQueryImpl<TaskQuery, Task> im
     return variableValueLessThanOrEqual(name, value);
   }
 
-  public TaskQuery taskVariableValueLike(String name, String value) {
-    return variableValueLike(name, value);
-  }
 
   public TaskQuery processVariableValueEquals(String variableName, Object variableValue) {
     return variableValueEquals(variableName, variableValue, false);
@@ -429,9 +430,6 @@ public class TaskQueryImpl extends AbstractVariableQueryImpl<TaskQuery, Task> im
     return variableValueLessThanOrEqual(name, value, false);
   }
 
-  public TaskQuery processVariableValueLike(String name, String value) {
-    return variableValueLike(name, value, false);
-  }
 
   public TaskQuery processDefinitionKey(String processDefinitionKey) {
     this.processDefinitionKey = processDefinitionKey;
@@ -580,7 +578,7 @@ public class TaskQueryImpl extends AbstractVariableQueryImpl<TaskQuery, Task> im
   
   @Override
   public TaskQuery orderByTenantId() {
-  	return orderBy(TaskQueryProperty.TENANT_ID);
+    return orderBy(TaskQueryProperty.TENANT_ID);
   }
   
   public String getMssqlOrDB2OrderBy() {
@@ -692,16 +690,52 @@ public class TaskQueryImpl extends AbstractVariableQueryImpl<TaskQuery, Task> im
   public boolean getExcludeSubtasks() {
     return excludeSubtasks;
   }
-	public String getTenantId() {
-		return tenantId;
-	}
-	public String getTenantIdLike() {
-		return tenantIdLike;
-	}
-	public boolean isWithoutTenantId() {
-		return withoutTenantId;
-	}
+  public String getTenantId() {
+    return tenantId;
+  }
+  public String getTenantIdLike() {
+    return tenantIdLike;
+  }
+  public boolean isWithoutTenantId() {
+    return withoutTenantId;
+  }
   public String getUserIdForCandidateAndAssignee() {
     return userIdForCandidateAndAssignee;
+  }
+
+  @Override
+  public TaskQuery taskVariableValueLike(String variableName, String variableValueLike) {
+  this.queryVariableValues.add(new TaskQueryVariableValue(variableName, variableValueLike, QueryOperator.LIKE, true));
+  return this;
+  }
+
+  @Override
+  public TaskQuery taskVariableValueLike(String variableValueLike) {
+  this.queryVariableValues.add(new TaskQueryVariableValue(null, variableValueLike, QueryOperator.LIKE, true));
+    return this;
+  }
+
+  @Override
+  public TaskQuery processVariableValueLike(String variableName, String variableValueLike) {
+  this.queryVariableValues.add(new TaskQueryVariableValue(variableName, variableValueLike, QueryOperator.LIKE, false));
+  return this;
+  }
+
+  @Override
+  public TaskQuery processVariableValueLike(String variableValueLike) {
+  this.queryVariableValues.add(new TaskQueryVariableValue(null, variableValueLike, QueryOperator.LIKE, false));
+  return this;
+  }
+
+  @Override
+  public TaskQuery startUserIds(Set<String> startUserIds) {
+  this.startUserIds = startUserIds;
+  return this;
+  }
+
+  @Override
+  public TaskQuery processDefinitionIds(Set<String> processDefinitionIds) {
+    this.processDefinitionIds = processDefinitionIds;
+    return this;
   }
 }

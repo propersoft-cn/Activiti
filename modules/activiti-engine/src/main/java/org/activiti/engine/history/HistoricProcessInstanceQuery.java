@@ -41,6 +41,21 @@ public interface HistoricProcessInstanceQuery extends Query<HistoricProcessInsta
 
   /** Only select historic process instances for the given process definition */
   HistoricProcessInstanceQuery processDefinitionId(String processDefinitionId);
+  
+  /**Only select historic process instances for the given process definition set(zhanghuafeng added)*/
+  HistoricProcessInstanceQuery processDefinitionIds(Set<String> processDefinitionIds);
+
+  /**Only select historic process instances for the given process assignee with(zhanghuafeng added)*/
+  HistoricProcessInstanceQuery assigneeWith(String assigneeWith);
+  
+  /**Only select historic process instances for the given process task finished with task definition key with(zhanghuafeng added)*/
+  HistoricProcessInstanceQuery taskFinishedWithDefinitionKey(String taskFinishedWithDefinitionKey);
+  
+  /**Only select historic process instances for the given process task finished without task definition key with(zhanghuafeng added)*/
+  HistoricProcessInstanceQuery taskFinishedWithoutDefinitionKey(String taskFinishedWithoutDefinitionKey);  
+
+  /**Only select historic process instances for the given process task finished without task definition keys with(zhanghuafeng added)*/
+  HistoricProcessInstanceQuery taskFinishedWithoutDefinitionKeys(Set<String> taskFinishedWithoutDefinitionKeys);  
 
   /** Only select historic process instances that are defined by a process
    * definition with the given key.  */
@@ -158,13 +173,16 @@ public interface HistoricProcessInstanceQuery extends Query<HistoricProcessInsta
   /** Only select historic process instance that are started by the given user. */
   HistoricProcessInstanceQuery startedBy(String userId);
   
-	/** Only select process instances that have the given tenant id. */
+  /** Only select historic process instance that are started by the given user. */
+  HistoricProcessInstanceQuery startedByUserIds(Set<String> userIds);
+  
+  /** Only select process instances that have the given tenant id. */
   HistoricProcessInstanceQuery processInstanceTenantId(String tenantId);
 
-	/** Only select process instances with a tenant id like the given one. */
+  /** Only select process instances with a tenant id like the given one. */
   HistoricProcessInstanceQuery processInstanceTenantIdLike(String tenantIdLike);
-	
-	/** Only select process instances that do not have a tenant id. */
+  
+  /** Only select process instances that do not have a tenant id. */
   HistoricProcessInstanceQuery processInstanceWithoutTenantId();
 
   /** Order by the process instance id (needs to be followed by {@link #asc()} or {@link #desc()}). */
@@ -185,7 +203,7 @@ public interface HistoricProcessInstanceQuery extends Query<HistoricProcessInsta
   /** Order by the duration of the process instance (needs to be followed by {@link #asc()} or {@link #desc()}). */
   HistoricProcessInstanceQuery orderByProcessInstanceDuration();
   
-	/** Order by tenant id (needs to be followed by {@link #asc()} or {@link #desc()}). */
+  /** Order by tenant id (needs to be followed by {@link #asc()} or {@link #desc()}). */
   HistoricProcessInstanceQuery orderByTenantId();
   
   /** Only select historic process instances started by the given process

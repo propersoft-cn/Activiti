@@ -269,7 +269,20 @@
   
   <sql id="commonSelectTaskByQueryCriteriaSql">
     <if test="candidateUser != null || candidateGroups != null || bothCandidateAndAssigned">
-      inner join ${prefix}ACT_RU_IDENTITYLINK I on I.TASK_ID_ = RES.ID_
+      <!-- add by zhanghuafeng begin -->
+      <if test="assignee == null">
+          inner join ${prefix}ACT_RU_IDENTITYLINK I on I.TASK_ID_ = RES.ID_
+        </if>
+      <if test="assignee != null">
+          left join ${prefix}ACT_RU_IDENTITYLINK I on I.TASK_ID_ = RES.ID_
+      </if>
+      <!-- add by zhanghuafeng end -->
+      
+      <!-- delete by zhanghuafeng begin -->
+        <!-- inner join ${prefix}ACT_RU_IDENTITYLINK I on I.TASK_ID_ = RES.ID_ -->
+        <!-- delete by zhanghuafeng begin -->
+        
+        
     </if>
     <foreach collection="queryVariableValues" index="index" item="var">
       <choose>
@@ -286,6 +299,9 @@
     </if>
     <if test="processInstanceBusinessKey != null || processInstanceBusinessKeyLike != null">
         inner join ${prefix}ACT_RU_EXECUTION E on RES.PROC_INST_ID_ = E.ID_
+    </if>
+    <if test="startUserIds != null">
+        inner join ${prefix}ACT_HI_PROCINST P on RES.PROC_INST_ID_ = P.ID_
     </if>
     <where> 
       <if test="taskId != null">
@@ -312,9 +328,32 @@
       <if test="maxPriority != null">
         and RES.PRIORITY_ &lt;= #{maxPriority}
       </if> 
+      <!-- delete by zhanghuafeng begin -->
+      <!--
       <if test="assignee != null">
         and RES.ASSIGNEE_ = #{assignee}
       </if>
+      -->
+      <!-- delete by zhanghuafeng end -->
+      
+      <!-- add by zhanghuafeng begin -->
+      <if test="assignee != null &amp;&amp; candidateUser == null">
+        and RES.ASSIGNEE_ = #{assignee}
+      </if>
+      <if test="assignee != null &amp;&amp; candidateUser != null">
+        and 
+        ( RES.ASSIGNEE_ = #{assignee}
+          or
+          (
+           RES.ASSIGNEE_ is null
+           and I.TYPE_ = 'candidate'
+           and I.USER_ID_ = #{assignee}
+          ) 
+        )
+      </if>
+      <!-- add by zhanghuafeng end -->
+      
+      
       <if test="assigneeLike != null">
         and RES.ASSIGNEE_ like #{assigneeLike}
       </if>
@@ -339,6 +378,7 @@
       <if test="processInstanceBusinessKey != null">
         and E.BUSINESS_KEY_ = #{processInstanceBusinessKey}
       </if>
+      
       <if test="processInstanceBusinessKeyLike != null">
         and E.BUSINESS_KEY_ like #{processInstanceBusinessKeyLike}
       </if>         
@@ -362,6 +402,13 @@
       </if>
       <if test="processDefinitionId != null">
         and RES.PROC_DEF_ID_ = #{processDefinitionId}
+      </if>
+      <if test="processDefinitionIds != null &amp;&amp; processDefinitionIds.size() &gt; 0">
+            and RES.PROC_DEF_ID_ IN
+            <foreach item="oneProcessDefinitionId" index="index" collection="processDefinitionIds" 
+                     open="(" separator="," close=")">
+              #{oneProcessDefinitionId}
+            </foreach>
       </if>
       <if test="processDefinitionKey != null">
         and D.KEY_ = #{processDefinitionKey}
@@ -396,7 +443,16 @@
       <if test="excludeSubtasks">
         and RES.PARENT_TASK_ID_ IS NULL
       </if>
+      
+      <!-- delete by zhanghuafeng begin -->
+      <!--
       <if test="candidateUser != null || candidateGroups != null">
+      -->
+      <!-- delete by zhanghuafeng end -->
+      
+      <!-- add by zhanghuafeng begin -->
+      <if test="assignee == null &amp;&amp; candidateUser != null || assignee == null &amp;&amp; candidateGroups != null">
+      <!-- add by zhanghuafeng end -->
         and RES.ASSIGNEE_ is null
         and I.TYPE_ = 'candidate'
         and 
@@ -505,6 +561,13 @@
           </if>
         </when>
       </choose>
+      <if test="startUserIds != null &amp;&amp; startUserIds.size() &gt; 0">
+            and P.START_USER_ID_ IN
+            <foreach item="startUserId" index="index" collection="startUserIds" 
+                     open="(" separator="," close=")">
+              #{startUserId}
+            </foreach>
+      </if>
     </where>
   </sql>
   
@@ -522,23 +585,23 @@
   </sql>  
 
   <select id="selectTaskByNativeQuery" parameterType="java.util.Map" resultMap="taskResultMap">
-  	<if test="resultType == 'LIST_PAGE'">
-  		${limitBefore}
-  	</if>
+    <if test="resultType == 'LIST_PAGE'">
+      ${limitBefore}
+    </if>
     ${sql}
     <if test="resultType == 'LIST_PAGE'">
-  		${limitAfter}
-  	</if>
+      ${limitAfter}
+    </if>
   </select>
   
   <select id="selectTaskByNativeQuery_mssql_or_db2" parameterType="java.util.Map" resultMap="taskResultMap">
-  	<if test="resultType == 'LIST_PAGE'">
-  		${limitBeforeNativeQuery}
-  	</if>
-  	${sql} 
     <if test="resultType == 'LIST_PAGE'">
-  		${limitAfter}
-  	</if>
+      ${limitBeforeNativeQuery}
+    </if>
+    ${sql} 
+    <if test="resultType == 'LIST_PAGE'">
+      ${limitAfter}
+    </if>
   </select>
 
   <select id="selectTaskCountByNativeQuery" parameterType="java.util.Map" resultType="long">

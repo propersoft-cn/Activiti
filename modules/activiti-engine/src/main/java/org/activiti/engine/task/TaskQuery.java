@@ -15,6 +15,7 @@ package org.activiti.engine.task;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.activiti.engine.ActivitiIllegalArgumentException;
 import org.activiti.engine.query.Query;
@@ -110,19 +111,19 @@ public interface TaskQuery extends Query<TaskQuery, Task>{
    */
   TaskQuery taskCandidateGroupIn(List<String> candidateGroups);
   
-	/**
-	 * Only select tasks that have the given tenant id.
-	 */
+  /**
+   * Only select tasks that have the given tenant id.
+   */
   TaskQuery taskTenantId(String tenantId);
 
-	/**
-	 * Only select tasks with a tenant id like the given one.
-	 */
+  /**
+   * Only select tasks with a tenant id like the given one.
+   */
   TaskQuery taskTenantIdLike(String tenantIdLike);
-	
-	/**
-	 * Only select tasks that do not have a tenant id.
-	 */
+  
+  /**
+   * Only select tasks that do not have a tenant id.
+   */
   TaskQuery taskWithoutTenantId();
 
   /** Only select tasks for the given process instance id. */
@@ -174,6 +175,13 @@ public interface TaskQuery extends Query<TaskQuery, Task>{
    * set to the given value.
    */
   TaskQuery taskVariableValueEquals(String variableName, Object variableValue);
+  
+  /**
+   * Only select tasks which have at least one local task variable like with the given value.
+   * zhanghuafeng added
+   */
+  TaskQuery taskVariableValueLike(String variableValue);
+  
   
   /**
    * Only select tasks which have at least one local task variable with the given value.
@@ -261,6 +269,13 @@ public interface TaskQuery extends Query<TaskQuery, Task>{
    * with the given value.
    */
   TaskQuery processVariableValueEquals(Object variableValue);
+  
+  /**
+   * Only select tasks which are part of a process that has at least one variable
+   * like with the given value.
+   * zhanghuafeng added
+   */
+  TaskQuery processVariableValueLike(String paramString);
   
   /**
    * Only select tasks which are part of a process that has a local string variable which 
@@ -353,6 +368,12 @@ public interface TaskQuery extends Query<TaskQuery, Task>{
   
   /**
    * Only select tasks which are part of a process instance which has the given
+   * process definition id set.
+   */
+  TaskQuery processDefinitionIds(Set<String> processDefinitionIds);
+  
+  /**
+   * Only select tasks which are part of a process instance which has the given
    * process definition name.
    */
   TaskQuery processDefinitionName(String processDefinitionName);
@@ -404,6 +425,11 @@ public interface TaskQuery extends Query<TaskQuery, Task>{
    */
   TaskQuery includeProcessVariables();
   
+  /**
+   * Started by user in the task query result
+   */
+  TaskQuery startUserIds(Set<String> startUserIds);
+  
   // ordering ////////////////////////////////////////////////////////////
   
   /** Order by task id (needs to be followed by {@link #asc()} or {@link #desc()}). */
@@ -433,6 +459,6 @@ public interface TaskQuery extends Query<TaskQuery, Task>{
   /** Order by due date (needs to be followed by {@link #asc()} or {@link #desc()}). */
   TaskQuery orderByDueDate();
   
-	/** Order by tenant id (needs to be followed by {@link #asc()} or {@link #desc()}). */
+  /** Order by tenant id (needs to be followed by {@link #asc()} or {@link #desc()}). */
   TaskQuery orderByTenantId();
 }

@@ -38,6 +38,7 @@ public class HistoricProcessInstanceQueryImpl extends AbstractVariableQueryImpl<
   protected boolean finished = false;
   protected boolean unfinished = false;
   protected String startedBy;
+  protected String assigneeWith;
   protected String superProcessInstanceId;
   protected boolean excludeSubprocesses;
   protected List<String> processKeyNotIn;
@@ -47,8 +48,14 @@ public class HistoricProcessInstanceQueryImpl extends AbstractVariableQueryImpl<
   protected Date finishedAfter;
   protected String processDefinitionKey;
   protected Set<String> processInstanceIds;
+  protected Set<String> processDefinitionIds;
+  protected Set<String> startedByUserIds;
   protected String involvedUser;
   protected boolean includeProcessVariables;
+  
+  protected String taskFinishedWithDefinitionKey;
+  protected String taskFinishedWithoutDefinitionKey;
+  protected Set<String> taskFinishedWithoutDefinitionKeys;
   protected String tenantId;
   protected String tenantIdLike;
   protected boolean withoutTenantId;
@@ -159,24 +166,24 @@ public class HistoricProcessInstanceQueryImpl extends AbstractVariableQueryImpl<
   }
   
   public HistoricProcessInstanceQuery processInstanceTenantId(String tenantId) {
-  	if (tenantId == null) {
-  		throw new ActivitiIllegalArgumentException("process instance tenant id is null");
-  	}
-  	this.tenantId = tenantId;
-  	return this;
+    if (tenantId == null) {
+      throw new ActivitiIllegalArgumentException("process instance tenant id is null");
+    }
+    this.tenantId = tenantId;
+    return this;
   }
   
   public HistoricProcessInstanceQuery processInstanceTenantIdLike(String tenantIdLike) {
-  	if (tenantIdLike == null) {
-  		throw new ActivitiIllegalArgumentException("process instance tenant id is null");
-  	}
-  	this.tenantIdLike = tenantIdLike;
-  	return this;
+    if (tenantIdLike == null) {
+      throw new ActivitiIllegalArgumentException("process instance tenant id is null");
+    }
+    this.tenantIdLike = tenantIdLike;
+    return this;
   }
   
   public HistoricProcessInstanceQuery processInstanceWithoutTenantId() {
-  	this.withoutTenantId = true;
-  	return this;
+    this.withoutTenantId = true;
+    return this;
   }
   
   public HistoricProcessInstanceQuery orderByProcessInstanceBusinessKey() {
@@ -204,7 +211,7 @@ public class HistoricProcessInstanceQueryImpl extends AbstractVariableQueryImpl<
   }
   
   public HistoricProcessInstanceQuery orderByTenantId() {
-  	return orderBy(HistoricProcessInstanceQueryProperty.TENANT_ID);
+    return orderBy(HistoricProcessInstanceQueryProperty.TENANT_ID);
   }
   
   public String getMssqlOrDB2OrderBy() {
@@ -243,7 +250,7 @@ public class HistoricProcessInstanceQueryImpl extends AbstractVariableQueryImpl<
     super.checkQueryOk();
     
     if(includeProcessVariables) {
-    	this.orderBy(HistoricProcessInstanceQueryProperty.INCLUDED_VARIABLE_TIME).asc();
+      this.orderBy(HistoricProcessInstanceQueryProperty.INCLUDED_VARIABLE_TIME).asc();
     }
   }
   
@@ -295,4 +302,58 @@ public class HistoricProcessInstanceQueryImpl extends AbstractVariableQueryImpl<
   public String getInvolvedUser() {
     return involvedUser;
   }
+  public HistoricProcessInstanceQuery processDefinitionIds(Set<String> processDefinitionIds) {
+      this.processDefinitionIds = processDefinitionIds;
+      return this;
+    }
+    
+    public HistoricProcessInstanceQuery assigneeWith(String userId) {
+      this.assigneeWith = userId;
+      return this;
+    }
+
+    public HistoricProcessInstanceQuery taskFinishedWithDefinitionKey(String taskFinishedWithDefinitionKey){
+    this.taskFinishedWithDefinitionKey = taskFinishedWithDefinitionKey;
+    return this;  
+    }
+    
+    public HistoricProcessInstanceQuery taskFinishedWithoutDefinitionKey(String taskFinishedWithoutDefinitionKey){
+    this.taskFinishedWithoutDefinitionKey = taskFinishedWithoutDefinitionKey;
+    return this;  
+    }
+    
+    public HistoricProcessInstanceQuery taskFinishedWithoutDefinitionKeys(Set<String> taskFinishedWithoutDefinitionKeys){
+    this.taskFinishedWithoutDefinitionKeys = taskFinishedWithoutDefinitionKeys;
+    return this;  
+    }
+    
+    @Override
+    public HistoricProcessInstanceQuery startedByUserIds(Set<String> startedByUserIds) {
+      this.startedByUserIds = startedByUserIds;
+      return this;
+    }
+
+    public String getAssigneeWith() {
+      return this.assigneeWith;
+    }
+    
+    public Set<String> getProcessDefinitionIds() {
+      return this.processDefinitionIds;
+    }
+    
+    public Set<String> getStartedByUserIds() {
+    return this.startedByUserIds;
+    }
+    
+    public String getTaskFinishedWithDefinitionKey() {
+    return this.taskFinishedWithDefinitionKey;
+    }
+
+    public String getTaskFinishedWithoutDefinitionKey() {
+    return this.taskFinishedWithoutDefinitionKey;
+    }
+    
+    public Set<String> getTaskFinishedWithoutDefinitionKeys() {
+    return this.taskFinishedWithoutDefinitionKeys;
+    }
 }

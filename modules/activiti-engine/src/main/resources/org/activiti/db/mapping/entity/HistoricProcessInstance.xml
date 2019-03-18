@@ -134,7 +134,7 @@
   
 
   <select id="selectHistoricProcessInstancesByQueryCriteria" parameterType="org.activiti.engine.impl.HistoricProcessInstanceQueryImpl" resultMap="historicProcessInstanceResultMap">
-  	${limitBefore}
+    ${limitBefore}
     select RES.* ${limitBetween}
     <include refid="selectHistoricProcessInstancesByQueryCriteriaSql"/>
     ${orderBy}
@@ -220,6 +220,48 @@
       <if test="processDefinitionId != null">
         and RES.PROC_DEF_ID_ = #{processDefinitionId}
       </if>
+      
+      
+      
+      <!-- add by zhanghuafeng begin-->
+      <if test="processDefinitionIds != null and !processDefinitionIds.isEmpty()">
+        and RES.PROC_DEF_ID_ in
+        <foreach item="item" index="index" collection="processDefinitionIds" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+      <if test="assigneeWith != null">
+         and exists (
+          select HTI.ID_ 
+          from ${prefix}ACT_HI_TASKINST HTI 
+          where RES.PROC_INST_ID_=HTI.PROC_INST_ID_ and HTI.ASSIGNEE_=#{assigneeWith})
+      </if>
+      <if test="taskFinishedWithDefinitionKey != null">
+         and exists (
+          select HTI.ID_ 
+          from ${prefix}ACT_HI_TASKINST HTI 
+          where RES.PROC_INST_ID_=HTI.PROC_INST_ID_ and HTI.TASK_DEF_KEY_=#{taskFinishedWithDefinitionKey} and HTI.END_TIME_ is not null)
+      </if>
+      <if test="taskFinishedWithoutDefinitionKey != null">
+         and not exists (
+          select HTI.ID_ 
+          from ${prefix}ACT_HI_TASKINST HTI 
+          where RES.PROC_INST_ID_=HTI.PROC_INST_ID_ and HTI.TASK_DEF_KEY_=#{taskFinishedWithoutDefinitionKey} and HTI.END_TIME_ is not null)
+      </if>
+      <if test="taskFinishedWithoutDefinitionKeys != null">
+         and not exists (
+          select HTI.ID_ 
+          from ${prefix}ACT_HI_TASKINST HTI 
+          where RES.PROC_INST_ID_=HTI.PROC_INST_ID_ 
+            and HTI.TASK_DEF_KEY_ in
+                <foreach item="item" index="index" collection="taskFinishedWithoutDefinitionKeys" open="(" separator="," close=")">
+                  #{item}
+                </foreach>
+            and HTI.END_TIME_ is not null)
+      </if>
+      <!-- add by zhanghuafeng end-->
+      
+      
       <if test="processDefinitionKey != null">
         and DEF.KEY_ = #{processDefinitionKey}
       </if>
@@ -257,6 +299,12 @@
       </if>
       <if test="startedBy != null">
         and RES.START_USER_ID_ = #{startedBy}
+      </if>
+      <if test="startedByUserIds != null and !startedByUserIds.isEmpty()">
+        and RES.START_USER_ID_ in
+        <foreach item="item" index="index" collection="startedByUserIds" open="(" separator="," close=")">
+          #{item}
+        </foreach>
       </if>
       <if test="superProcessInstanceId != null">
         and RES.SUPER_PROCESS_INSTANCE_ID_ = #{superProcessInstanceId}
@@ -344,23 +392,23 @@
   </sql>
  
    <select id="selectHistoricProcessInstanceByNativeQuery" parameterType="java.util.Map" resultMap="historicProcessInstanceResultMap">
-   	<if test="resultType == 'LIST_PAGE'">
-   		${limitBefore}
-   	</if>
+    <if test="resultType == 'LIST_PAGE'">
+      ${limitBefore}
+    </if>
     ${sql}
     <if test="resultType == 'LIST_PAGE'">
-    	${limitAfter}
+      ${limitAfter}
     </if>
   </select>
   
   <select id="selectHistoricProcessInstanceByNativeQuery_mssql_or_db2" parameterType="java.util.Map" resultMap="historicProcessInstanceResultMap">
-  	<if test="resultType == 'LIST_PAGE'">
-        ${limitBeforeNativeQuery}
-  	</if>
-  	${sql} 
     <if test="resultType == 'LIST_PAGE'">
-  		${limitAfter}
-  	</if>
+        ${limitBeforeNativeQuery}
+    </if>
+    ${sql} 
+    <if test="resultType == 'LIST_PAGE'">
+      ${limitAfter}
+    </if>
   </select>
 
   <select id="selectHistoricProcessInstanceCountByNativeQuery" parameterType="java.util.Map" resultType="long">
